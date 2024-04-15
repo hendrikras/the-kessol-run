@@ -1,12 +1,83 @@
+
+let boom, blaster, burn, craft, emitter,  endgame, gameObjects, img;
+
+function preload() {
+  img = loadImage("particle2.png");
+  soundFormats('mp3', 'ogg');0
+
+  blaster = loadSound('blaster.mp3');
+  burn = loadSound('fire.mp3');
+  burn.playMode('restart');
+  boom = loadSound('bang.mp3');
+  boom.playMode('restart');
+}
+
+const getPathsAndColors = (svgElements) => svgElements.map(el => ({ path: el.getAttribute('d'), fill: el.getAttribute('fill') }));
+
 function setup() {
-  createCanvas(400, 400);
+  textAlign(CENTER);
+  createCanvas(innerWidth, innerHeight);
+  const size = width / 50;
+  img.resize(size, size);
+  const svg = select('#svgElement').elt;
+  const svgAsteroid = select('#asteroid').elt;
+  const asteroidShapes = getPathsAndColors([...svgAsteroid.children]);
+  const craftShapes = getPathsAndColors([...svg.children]);
+
+  craft = new Craft(svg.getAttribute('viewBox'), craftShapes, { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 }, 0, 0, CRAFT_SIZE);
+  const vb = svgAsteroid.getAttribute('viewBox');
+  gameObjects = [];
+
+  // Initialize stars
+  for (let i = 0; i < STAR_COUNT; i++) {
+    gameObjects.push(new Star({ x: random(innerWidth), y: random(innerHeight) }, 0, 0, random(STAR_SIZE, STAR_SIZE / 2)));
+  }
+  // The first asteroid
+  gameObjects.push(new SVGPaths(vb, asteroidShapes, { x: CANVAS_SIZE / 5, y: CANVAS_SIZE / 5 }, ROCK_SPEED, radians(200), ROCK_SIZE));
+
 }
 
 function draw() {
-  if (mouseIsPressed) {
-    fill(0);
+  background('#162F4B');
+  noStroke();
+  textSize(30);
+
+  const ctx = drawingContext;
+
+  if (gameObjects.some(object => object instanceof SVGPaths)) {
+    gameObjects.forEach((object, i) => {
+      object.checkCollision(craft);
+      object.handleMovement();
+
+      gameObjects.forEach((other, index) => {
+        if (index !== i && object.collides && other.collides) {
+          object.checkCollision(other);
+        }
+        object.speed = 0;
+      });
+      object.draw(ctx);
+    });
   } else {
-    fill(255);
+    endgame = 'You Win';
   }
-  ellipse(mouseX, mouseY, 80, 80);
+  if (endgame) {
+    fill(255);
+    text(endgame, innerWidth / 2, innerHeight / 2);
+  } else {
+    craft.handleMovement();
+    craft.draw(ctx);
+  }
+}
+
+function keyPressed() {
+  if (keyIsDown(32)) { // Space bar
+    if (endgame) {
+      endgame = null;
+      setup();
+      return;
+    }
+    blaster.play();
+    const nozzle = craft.getNozzlePosition();
+    gameObjects.push(new Bullet(nozzle, BULLET_SPEED, craft.angle, BULLET_SIZE));
+  }
 }

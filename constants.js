@@ -1,0 +1,12 @@
+const { innerHeight, innerWidth } = window;
+const CANVAS_SIZE = innerHeight < innerWidth ? innerHeight : innerWidth;
+const TURN_SPEED = 0.1;
+const CRAFT_SPEED = CANVAS_SIZE / 5000;
+const TOP_SPEED = 10;
+const BULLET_SPEED = CANVAS_SIZE / 50;
+const CRAFT_SIZE = CANVAS_SIZE / 15;
+const STAR_SIZE = CANVAS_SIZE / 300;
+const BULLET_SIZE = STAR_SIZE * 2;
+const STAR_COUNT = CANVAS_SIZE / 3;
+const ROCK_SIZE = CANVAS_SIZE / 2.5;
+const ROCK_SPEED = CRAFT_SPEED * 10;

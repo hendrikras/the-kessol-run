@@ -1,28 +1,8 @@
-const { innerHeight, innerWidth} = window;
-const CANVAS_SIZE = innerHeight < innerWidth ? innerHeight : innerWidth;
-const TURN_SPEED = 0.1;
-const CRAFT_SPEED = CANVAS_SIZE / 5000;
-const BULLET_SPEED = CANVAS_SIZE / 50;
-const CRAFT_SIZE = CANVAS_SIZE / 15;
-const STAR_SIZE = CANVAS_SIZE / 300;
-const BULLET_SIZE = STAR_SIZE * 2;
-const STAR_COUNT = CANVAS_SIZE / 3;
-const ROCK_SIZE = CANVAS_SIZE / 2.5;
-const ROCK_SPEED = CRAFT_SPEED * 10;
-
-let craft, gameObjects, endgame;
-
-function getPathsAndColors(svgElements) {
-  return svgElements.map(el => ({
-    path: el.getAttribute('d'),
-    fill: el.getAttribute('fill') 
-  }));
-}
-
 class Entity {
   constructor(position, speed, angle, size) {
     this.position = createVector(position.x, position.y);
     this.velocity = createVector();
+
     this.acceleration = createVector();
     this.speed = speed;
     this.angle = angle;
@@ -30,8 +10,8 @@ class Entity {
     this.size = size;
     this.collides = false;
   }
-  checkCollision() {}
-  handleMovement() {}
+  checkCollision() { }
+  handleMovement() { }
 }
 
 class GameObject extends Entity {
@@ -55,8 +35,8 @@ class GameObject extends Entity {
     }
   }
   handleMovement(friction = true) {
-    if (this.position.x < -this.radius) this.position.x = CANVAS_SIZE + this.radius;
-    if (this.position.y < -this.radius) this.position.y = CANVAS_SIZE + this.radius;
+    if (this.position.x < -this.radius) this.position.x = width + this.radius;
+    if (this.position.y < -this.radius) this.position.y = height + this.radius;
     if (this.position.x > width + this.radius) this.position.x = -this.radius;
     if (this.position.y > height + this.radius) this.position.y = -this.radius;
 
@@ -65,6 +45,7 @@ class GameObject extends Entity {
     this.acceleration.add(directionVector);
 
     this.velocity.add(this.acceleration);
+    friction && this.velocity.limit(TOP_SPEED);
     this.position.add(this.velocity);
 
     // Deceleration.
@@ -102,6 +83,8 @@ class SVGPaths extends GameObject {
     this.velocity.mult(0.9);
     gameObject.velocity.mult(0.75);
     this.acceleration.add(_dist.mult(0.5 * vStore));
+    burn.stop();
+    boom.play();
   }
   draw(ctx) {
     const cos = Math.cos(this.angle);
@@ -111,7 +94,7 @@ class SVGPaths extends GameObject {
     const pos = v.copy().rotate(this.angle).sub(v);
     const offset = createVector(this.radius, this.radius);
     const p = this.position.copy().sub(offset);
-   
+
     ctx.setTransform(this.scaleX * cos, this.scaleX * -sin, this.scaleY * sin, this.scaleY * cos, p.x, p.y);
     ctx.translate(pos.x, pos.y);
 
@@ -129,9 +112,27 @@ class SVGPaths extends GameObject {
 class Craft extends SVGPaths {
   constructor(viewBox, shapes, position, speed, angle, size) {
     super(viewBox, shapes, position, speed, angle, size);
+    this.nozzle = this.position.copy();
+    this.exaust = this.getNozzlePosition();
+    this.emitter = new Emitter(CANVAS_SIZE / 2, CANVAS_SIZE / 2, this.position);
+  }
+  handleCollision(dist, gameObject) {
+    super.handleCollision(dist, gameObject);
+    burn.stop();
+  }
+  getNozzlePosition(){
+    const radiusVector = p5.Vector.fromAngle(-this.angle + radians(270));
+    radiusVector.mult(this.radius + (this.height * 0.0333  )); // Scale the vector by the radius
+    return p5.Vector.add(this.position, radiusVector);
+  }
+  geExaustPosition(){
+    const radiusVector = p5.Vector.fromAngle(-this.angle - radians(270));
+    radiusVector.mult(this.radius);
+    return p5.Vector.add(this.position, radiusVector);
   }
   handleMovement() {
     super.handleMovement();
+    this.exaust = this.getNozzlePosition();
     // Check for cursor keys
     if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
       if (this.angle >= 2 * Math.PI) {
@@ -146,10 +147,23 @@ class Craft extends SVGPaths {
       this.angle -= TURN_SPEED;
     }
     if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
+      this.emitter.addParticle(this.geExaustPosition());
       this.speed = CRAFT_SPEED;
+      if (!burn.isPlaying()) {
+        burn.play();
+      }
     } else {
       this.speed = 0;
+      burn.stop();
     }
+  }
+  draw(ctx){
+    super.draw(ctx);
+    const force = p5.Vector.fromAngle(-this.angle - radians(270));
+    force.normalize();
+    force.div(50);
+    this.emitter.applyForce(force);
+    this.emitter.run();
   }
 }
 
@@ -166,7 +180,7 @@ class Bullet extends GameObject {
     super.handleCollision(dist, gameObject);
     this.removeFromWorld();
     if (!endgame) {
-      if (gameObject.size > 25) {
+      if (gameObject.size > height / 25) {
         gameObjects.push(
           new SVGPaths(gameObject.viewBox, gameObject.shapes, gameObject.position, 5, this.angle + radians(45), gameObject.size / 2),
           new SVGPaths(gameObject.viewBox, gameObject.shapes, gameObject.position, 5, this.angle + radians(270), gameObject.size / 2)
@@ -187,78 +201,80 @@ class Star extends Entity {
     this.color = color;
   }
   draw() {
-     fill(255);
-     ellipse(this.position.x, this.position.y, this.size, this.size);
-  }
-}
-
-function setup() {
-  textAlign(CENTER);
-  createCanvas(innerWidth, innerHeight);
-  
-  const svg = select('#svgElement').elt;
-  const svgAsteroid = select('#asteroid').elt;
-  asteroidShapes = getPathsAndColors([...svgAsteroid.children]);
-  craftShapes = getPathsAndColors([...svg.children]);
- 
-  
-  craft = new Craft(svg.getAttribute('viewBox'), craftShapes, { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 }, 0, 0, CRAFT_SIZE);
-  const vb = svgAsteroid.getAttribute('viewBox');
-  gameObjects = [];
-   
-   // Initialize stars
-   for (let i = 0; i < STAR_COUNT; i++) {
-      gameObjects.push(new Star({x: random(innerWidth), y: random(innerHeight)}, 0, 0, random(STAR_SIZE, STAR_SIZE / 2)));
-   }
-  // The first asteroid
-  gameObjects.push(new SVGPaths(vb, asteroidShapes, { x: CANVAS_SIZE / 5, y: CANVAS_SIZE / 5 }, ROCK_SPEED, radians(200), ROCK_SIZE));
-}
-
-function draw() {
-  background('#162F4B');
-  noStroke();
-  textSize(30);
-
-  const ctx = drawingContext;
-
-  if (gameObjects.some(object => object instanceof SVGPaths)) {
-    gameObjects.forEach((object, i) => {
-      object.checkCollision(craft);
-      object.handleMovement();
-
-      gameObjects.forEach((other, index) => {
-        if (index !== i && object.collides && other.collides) {
-          object.checkCollision(other);
-        }
-        object.speed = 0;
-      });
-      object.draw(ctx);
-    });
-  } else {
-    endgame = 'You Win';
-  }
-  if (endgame) {
     fill(255);
-    text(endgame, CANVAS_SIZE / 2, CANVAS_SIZE / 2);
-  } else {
-    craft.handleMovement();
-    craft.draw(ctx);
+    ellipse(this.position.x, this.position.y, this.size, this.size);
   }
 }
 
-function keyPressed() {
-  if (keyIsDown(32)) { // Space bar
-    if (endgame) {
-      endgame = null;
-      setup();
-      return;
-    }
-    const { position, angle, radius } = craft;
-    
-    const radiusVector = p5.Vector.fromAngle(-angle + radians(270));
-    radiusVector.mult(radius + BULLET_SIZE); // Scale the vector by the radius
-    const nozzle = p5.Vector.add(position, radiusVector);
-
-    gameObjects.push(new Bullet(nozzle, BULLET_SPEED, angle, BULLET_SIZE));
+class Particle extends Entity {
+  constructor(position, speed, angle, size) {
+    super(position, speed, angle, size);
+    let vx = randomGaussian(0, 0.3);
+    let vy = randomGaussian(-1, 0.3);
+    this.velocity = createVector(vx, vy);
+    this.acceleration = createVector(0, 0);
+    this.lifespan = 40.0;
   }
-}  
+  run() {
+    this.update();
+    this.show();
+  }
+
+  // Method to apply a force vector to the Particle object
+  // Note we are ignoring "mass" here
+  applyForce(force) {
+    this.acceleration.add(force);
+  }
+
+  // Method to update position
+  update() {
+    this.velocity.add(this.acceleration);
+    this.position.add(this.velocity);
+    this.lifespan -= 2;
+    this.acceleration.mult(0); // clear Acceleration
+  }
+
+  // Method to draw
+  show() {
+    tint(255, this.lifespan);
+    imageMode(CENTER);
+
+    image(img, this.position.x, this.position.y);
+   
+    // Drawing a circle instead
+    // fill(255, this.lifespan);
+    // noStroke();
+    // circle(this.position.x, this.position.y, img.width);
+  }
+
+  // Is the particle still useful?
+  isDead() {
+    return (this.lifespan < 0.0);
+  }
+}
+
+class Emitter {
+  constructor(x, y, origin) {
+    this.particles = []; // Initialize the arraylist
+    this.origin = origin; // Store the origin point
+  }
+
+  run() {
+    for (let particle of this.particles) {
+      particle.run();
+    }
+    this.particles = this.particles.filter((particle) => !particle.isDead());
+  }
+
+  // Method to add a force vector to all particles currently in the system
+  applyForce(force) {
+    // Enhanced loop!!!
+    for (let particle of this.particles) {
+      particle.applyForce(force);
+    }
+  }
+
+  addParticle(particle = this.origin) {
+    this.particles.push(new Particle({x:particle.x, y:particle.y}, 0 , 0 ,1));
+  }
+}
