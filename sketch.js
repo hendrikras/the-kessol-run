@@ -2,7 +2,7 @@
 let boom, blaster, burn, craft, emitter,  endgame, gameObjects, img;
 
 function preload() {
-  img = loadImage("particle2.png");
+  img = loadImage("particle-yellow.png");
   soundFormats('mp3', 'ogg');0
 
   blaster = loadSound('blaster.mp3');
@@ -12,17 +12,19 @@ function preload() {
   boom.playMode('restart');
 }
 
-const getPathsAndColors = (svgElements) => svgElements.map(el => ({ path: el.getAttribute('d'), fill: el.getAttribute('fill') }));
+const getPathsAndColors = (svgElements) => svgElements.map(el => ({ path: el.getAttribute('d'), fill: el.getAttribute('fill'), opacity: el.getAttribute('fill-opacity'), points: el.getAttribute('points'), transform: el.getAttribute('transform') }));
 
 function setup() {
   textAlign(CENTER);
   createCanvas(innerWidth, innerHeight);
   const size = width / 50;
-  img.resize(size, size);
-  const svg = select('#svgElement').elt;
+  img.resize(size, size);         
+  const svg = select('#AeonFalcone').elt;
   const svgAsteroid = select('#asteroid').elt;
+  const svgEnemy = select('#svgElement').elt;
   const asteroidShapes = getPathsAndColors([...svgAsteroid.children]);
   const craftShapes = getPathsAndColors([...svg.children]);
+  const enemyShapes = getPathsAndColors([...svgEnemy.children]);
 
   craft = new Craft(svg.getAttribute('viewBox'), craftShapes, { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 }, 0, 0, CRAFT_SIZE);
   const vb = svgAsteroid.getAttribute('viewBox');
@@ -34,6 +36,8 @@ function setup() {
   }
   // The first asteroid
   gameObjects.push(new SVGPaths(vb, asteroidShapes, { x: CANVAS_SIZE / 5, y: CANVAS_SIZE / 5 }, ROCK_SPEED, radians(200), ROCK_SIZE));
+
+  gameObjects.push(new EnemyCraft(svgEnemy.getAttribute('viewBox'), enemyShapes, { x: CANVAS_SIZE , y: CANVAS_SIZE / 10 }, 0, 0, CRAFT_SIZE / 2));
 
 }
 
@@ -76,8 +80,6 @@ function keyPressed() {
       setup();
       return;
     }
-    blaster.play();
-    const nozzle = craft.getNozzlePosition();
-    gameObjects.push(new Bullet(nozzle, BULLET_SPEED, craft.angle, BULLET_SIZE));
+    craft.fire();
   }
 }
