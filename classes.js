@@ -2,16 +2,44 @@ class Entity {
   constructor(position, speed, angle, size) {
     this.position = createVector(position.x, position.y);
     this.velocity = createVector();
-    this.lifespan = 40.0;
+    this.lifespan = 30.0;
     this.acceleration = createVector();
     this.speed = speed;
     this.angle = angle;
     this.radius = size / 2;
     this.size = size;
     this.collides = false;
+    this.emitter = new Emitter(this.position);
   }
   checkCollision() { }
   handleMovement() { }
+
+  removeFromWorld() {
+    gameObjects.splice(gameObjects.indexOf(this), 1);
+  }
+  draw(){
+    if (this.emitter.particles.length > 0) {
+      this.emitter.run();
+    }
+  }
+}
+
+class Explosion  extends Entity {
+  constructor(position, speed, angle, size) {
+    super(position, speed, angle, size);
+    this.collides = false;
+  }
+  handleMovement(){
+    if (this.lifespan > 0){
+      this.lifespan -= 2;
+      for(let i = 0; i < 10; i++) {
+        this.emitter.addParticle();
+        this.emitter.particles.at(-1).applyForce(p5.Vector.random2D().mult(14));
+     }
+     return;
+    }
+    this.removeFromWorld();
+  }
 }
 
 class GameObject extends Entity {
@@ -20,9 +48,6 @@ class GameObject extends Entity {
     this.collides = true;
   }
 
-  removeFromWorld() {
-    gameObjects.splice(gameObjects.indexOf(this), 1);
-  }
   checkCollision(gameObject) {
     const dist = p5.Vector.sub(gameObject.position, this.position);
     if (dist.mag() <= gameObject.radius + this.radius) {
@@ -86,7 +111,18 @@ class SVGPaths extends GameObject {
     burn.stop();
     boom.play();
   }
+
+  removeFromWorld(){
+    this.explode();
+    super.removeFromWorld();
+  }
+  explode() {
+    explosion.play();
+    gameObjects.push(new Explosion(this.position, 0, 0, this.radius * 10));
+  }
+
   draw(ctx) {
+    super.draw(ctx);
     const cos = Math.cos(this.angle);
     const sin = Math.sin(this.angle);
 
@@ -111,6 +147,20 @@ class SVGPaths extends GameObject {
   }
 }
 
+class Rock extends SVGPaths {
+  constructor(viewBox, shapes, position, speed, angle, size) {
+    super(viewBox, shapes, position, speed, angle, size);
+  }
+  removeFromWorld(){
+    super.removeFromWorld();
+    // create smaller asteroids
+    gameObjects.push(
+      new Rock(this.viewBox, this.shapes, this.position, 5, this.angle + radians(45), this.size / 2),
+      new Rock(this.viewBox, this.shapes, this.position, 5, this.angle + radians(270), this.size / 2)
+    );
+  }
+}
+
 class Vehicle extends SVGPaths {
   constructor(viewBox, shapes, position, speed, angle, size) {
     super(viewBox, shapes, position, speed, angle, size);
@@ -125,18 +175,16 @@ class Vehicle extends SVGPaths {
     radiusVector.mult(this.radius);
     return p5.Vector.add(this.position, radiusVector);
   }
-  fire(){    
+  fire(){   
     gameObjects.push(new Bullet(this.getNozzlePosition(), BULLET_SPEED, this.angle, BULLET_SIZE));
-    blaster.play();
+    // blaster.play();
   }
 }
-
 class Craft extends Vehicle {
   constructor(viewBox, shapes, position, speed, angle, size) {
     super(viewBox, shapes, position, speed, angle, size);
     this.nozzle = this.position.copy();
     this.exaust = this.getNozzlePosition();
-    this.emitter = new Emitter(CANVAS_SIZE / 2, CANVAS_SIZE / 2, this.position);
   }
   handleCollision(dist, gameObject) {
     super.handleCollision(dist, gameObject);
@@ -170,14 +218,11 @@ class Craft extends Vehicle {
       burn.stop();
     }
   }
-
-  draw(ctx){
-    super.draw(ctx);
+  getParticleDirection(){
     const force = p5.Vector.fromAngle(-this.angle - radians(270));
     force.normalize();
     force.div(50);
-    this.emitter.applyForce(force);
-    this.emitter.run();
+    return force;
   }
 }
 
@@ -216,16 +261,10 @@ class Bullet extends GameObject {
   handleCollision(dist, gameObject) {
     super.handleCollision(dist, gameObject);
     this.removeFromWorld();
+
     if (!endgame) {
       // only if the object is not the craft or the enemy craft
       gameObject.removeFromWorld();
-      if (gameObject.constructor.name== 'SVGPaths'  && gameObject.size > height / 25) { 
-        gameObjects.push(
-          new SVGPaths(gameObject.viewBox, gameObject.shapes, gameObject.position, 5, this.angle + radians(45), gameObject.size / 2),
-          new SVGPaths(gameObject.viewBox, gameObject.shapes, gameObject.position, 5, this.angle + radians(270), gameObject.size / 2)
-        );
-      }
-      // gameObject.removeFromWorld();
     }
   }
   draw(ctx) {
@@ -233,7 +272,6 @@ class Bullet extends GameObject {
     ellipse(this.position.x, this.position.y, this.radius * 2);
   }
 }
-
 
 class Star extends Entity {
   constructor(position, speed, angle, size, color) {
@@ -253,7 +291,6 @@ class Particle extends Entity {
     let vy = randomGaussian(-1, 0.3);
     this.velocity = createVector(vx, vy);
     this.acceleration = createVector(0, 0);
- 
   }
   run() {
     this.update();
@@ -276,15 +313,15 @@ class Particle extends Entity {
 
   // Method to draw
   show() {
-    tint(255, this.lifespan);
-    imageMode(CENTER);
+    // tint(255, this.lifespan);
+    // imageMode(CENTER);
 
-    image(img, this.position.x, this.position.y);
+    // image(img, this.position.x, this.position.y);
    
     // Drawing a circle instead
-    // fill(255, this.lifespan);
-    // noStroke();
-    // circle(this.position.x, this.position.y, img.width);
+    fill(248,231, 190, this.lifespan);
+    noStroke();
+    circle(this.position.x, this.position.y, img.width);
   }
 
   // Is the particle still useful?
@@ -294,7 +331,7 @@ class Particle extends Entity {
 }
 
 class Emitter {
-  constructor(x, y, origin) {
+  constructor(origin) {
     this.particles = []; // Initialize the arraylist
     this.origin = origin; // Store the origin point
   }
@@ -308,13 +345,13 @@ class Emitter {
 
   // Method to add a force vector to all particles currently in the system
   applyForce(force) {
-    // Enhanced loop!!!
     for (let particle of this.particles) {
       particle.applyForce(force);
     }
   }
 
   addParticle(particle = this.origin) {
-    this.particles.push(new Particle({x:particle.x, y:particle.y}, 0 , 0 ,1));
+    const p = new Particle({x:particle.x, y:particle.y}, 0 , 0 ,1)
+    this.particles.push(p); 
   }
 }
