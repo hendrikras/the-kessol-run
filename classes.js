@@ -24,17 +24,18 @@ class Entity {
   }
 }
 
-class Explosion  extends Entity {
+class Explosion extends Entity {
   constructor(position, speed, angle, size) {
     super(position, speed, angle, size);
     this.collides = false;
+    this.lifespan = Math.sqrt(this.size) * 1.6;
   }
   handleMovement(){
     if (this.lifespan > 0){
       this.lifespan -= 2;
-      for(let i = 0; i < 10; i++) {
+      for(let i = 0; i < 5; i++) {
         this.emitter.addParticle();
-        this.emitter.particles.at(-1).applyForce(p5.Vector.random2D().mult(14));
+        this.emitter.particles.at(-1).applyForce(p5.Vector.random2D().mult(Math.sqrt(this.size)));
      }
      return;
     }
@@ -91,11 +92,11 @@ class SVGPaths extends GameObject {
     super(position, speed, angle, size);
     this.shapes = shapes;
     this.viewBox = viewBox;
-    const [minX, minY, height, width] = viewBox.split(' ');
-    this.scaleX = size / width;
-    this.scaleY = size / height;
-    this.width = width;
-    this.height = height;
+    const [minX, minY, h, w] = viewBox.split(' ');
+    this.scaleX = size / w;
+    this.scaleY = size / h;
+    this.width = w;
+    this.height = h;
   }
   handleCollision(dist, gameObject) {
     super.handleCollision(dist, gameObject);
@@ -118,7 +119,7 @@ class SVGPaths extends GameObject {
   }
   explode() {
     explosion.play();
-    gameObjects.push(new Explosion(this.position, 0, 0, this.radius * 10));
+    gameObjects.push(new Explosion(this.position, 0, 0, this.size));
   }
 
   draw(ctx) {
@@ -154,10 +155,12 @@ class Rock extends SVGPaths {
   removeFromWorld(){
     super.removeFromWorld();
     // create smaller asteroids
-    gameObjects.push(
-      new Rock(this.viewBox, this.shapes, this.position, 5, this.angle + radians(45), this.size / 2),
-      new Rock(this.viewBox, this.shapes, this.position, 5, this.angle + radians(270), this.size / 2)
-    );
+    if (this.size > height / 25) { 
+      gameObjects.push(
+        new Rock(this.viewBox, this.shapes, this.position, 5, this.angle + radians(45), this.size / 2),
+        new Rock(this.viewBox, this.shapes, this.position, 5, this.angle + radians(270), this.size / 2)
+      );
+    }
   }
 }
 
@@ -232,15 +235,19 @@ class EnemyCraft extends Vehicle {
   }
   handleMovement() {
     // make the craft face the player
-    const angle = p5.Vector.sub(this.position, craft.position).heading();
-    this.angle = -angle - radians(270);
-    // move the craft
-    this.speed = CRAFT_SPEED / 2;
-    super.handleMovement();
-    // fire every second
-    if (frameCount % 100 === 0) {
-      this.fire();
+    if (!endgame){
+      const angle = p5.Vector.sub(this.position, craft.position).heading();
+      this.angle = -angle - radians(270);
+      // move the craft
+      this.speed = CRAFT_SPEED / 2;
+         // fire every second
+      if (frameCount % 100 === 0) {
+        this.fire();
+      }
     }
+
+    super.handleMovement();
+ 
   }
 
 }
@@ -319,9 +326,14 @@ class Particle extends Entity {
     // image(img, this.position.x, this.position.y);
    
     // Drawing a circle instead
-    fill(248,231, 190, this.lifespan);
+    fill(248,231, 190, this.lifespan / 4);
     noStroke();
-    circle(this.position.x, this.position.y, img.width);
+    circle(this.position.x, this.position.y, this.size);
+    circle(this.position.x, this.position.y, this.size * 0.9);
+    circle(this.position.x, this.position.y, this.size * 0.8);
+    circle(this.position.x, this.position.y, this.size * 0.7);
+    // circle(this.position.x, this.position.y, this.size * 0.6);
+    // circle(this.position.x, this.position.y, this.size * 0.5);
   }
 
   // Is the particle still useful?
@@ -329,7 +341,6 @@ class Particle extends Entity {
     return (this.lifespan < 0.0);
   }
 }
-
 class Emitter {
   constructor(origin) {
     this.particles = []; // Initialize the arraylist
@@ -351,7 +362,45 @@ class Emitter {
   }
 
   addParticle(particle = this.origin) {
-    const p = new Particle({x:particle.x, y:particle.y}, 0 , 0 ,1)
+    const ratio = width  > height ? width: height;
+    const p = new Particle({x:particle.x, y:particle.y}, 0 , 0 , ratio / random(30, 50));
     this.particles.push(p); 
   }
+}
+
+class PowerSlot {
+  constructor(){
+    this.full = false;
+    this.width = width / 10;
+    this.height = this.height / 10;
+    this.x = random(0, width - this.width);
+    this.y = random(0, height - this.height);
+  }
+  draw(){
+    // draw a rectangle within a rectange
+    fill(255, 255, 255, 100);
+    noStroke();
+    rect(this.x, this.y, this.width, this.height);
+    fill(255, 255, 255, 255);
+    noStroke();
+    rect(this.x, this.y, this.width, this.height);
+  }
+}
+
+class PowerBar {
+  constructor() {
+    this.power = 0;
+    this.slots = [];
+        // create a rectangle that is composed of 10 power slots
+        for (let i = 0; i < 10; i++) {
+          this.slots[i] = new PowerSlot();
+        }
+  }
+
+  draw(){
+    this.slots.forEach((slot) => {
+      slot.draw();
+    });
+  }
+
 }

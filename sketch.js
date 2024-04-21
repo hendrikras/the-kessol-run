@@ -1,11 +1,11 @@
 
-let boom, blaster, burn, craft, emitter, endgame, explosion, gameObjects, img;
+let boom, blaster, burn, craft, emitter, endgame, explosion, gameObjects, img, powerBar;
 
 function preload() {
   img = loadImage("particle-yellow.png");
   soundFormats('mp3', 'ogg');
   explosion = loadSound('explosion.mp3');
-  blaster = loadSound('blaster.mp3');
+  blaster = loadSound('laser.mp3');
   burn = loadSound('fire.mp3');
   burn.playMode('restart');
   boom = loadSound('bang.mp3');
@@ -26,6 +26,8 @@ function setup() {
   const craftShapes = getPathsAndColors([...svg.children]);
   const enemyShapes = getPathsAndColors([...svgEnemy.children]);
 
+  powerBar = new PowerBar();
+
   craft = new Craft(svg.getAttribute('viewBox'), craftShapes, { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 }, 0, 0, CRAFT_SIZE);
   const vb = svgAsteroid.getAttribute('viewBox');
   gameObjects = [];
@@ -45,6 +47,7 @@ function draw() {
   background('#162F4B');
   noStroke();
   textSize(30);
+  powerBar.draw();
 
   const ctx = drawingContext;
 
