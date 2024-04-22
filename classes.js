@@ -113,16 +113,7 @@ class SVGPaths extends GameObject {
     boom.play();
   }
 
-  removeFromWorld(){
-    this.explode();
-    super.removeFromWorld();
-  }
-  explode() {
-    explosion.play();
-    gameObjects.push(new Explosion(this.position, 0, 0, this.size));
-  }
-
-  draw(ctx) {
+  draw(ctx, colorOverride) {
     super.draw(ctx);
     const cos = Math.cos(this.angle);
     const sin = Math.sin(this.angle);
@@ -139,7 +130,7 @@ class SVGPaths extends GameObject {
     
       const path =  new Path2D(shape.path);
       const color = shape.fill;
-      color ? fill(color) : fill(255);
+      color ? colorOverride ? fill(colorOverride) : fill(color) : fill(255);
       
       ctx.fill(path);
     });
@@ -148,25 +139,55 @@ class SVGPaths extends GameObject {
   }
 }
 
-class Rock extends SVGPaths {
-  constructor(viewBox, shapes, position, speed, angle, size) {
-    super(viewBox, shapes, position, speed, angle, size);
+class PowerUp extends SVGPaths {
+  removeFromWorld(){
+    charge.play();
+    super.removeFromWorld();
   }
+  handleCollision(_ , gameObject) {
+    if (gameObject instanceof Craft) {
+      craft.power += 1;
+      this.removeFromWorld();
+    }
+  }
+
+  draw(ctx){
+    // glow up every second
+    const x = sin(TWO_PI * frameCount / 50);
+    super.draw(ctx, color(170, map(x, -1, 1, 250, 125), map(x, -1, 1, 255, 100)));
+  }
+}
+
+class GoesKaboom extends SVGPaths {
+  removeFromWorld(){
+    this.explode();
+    super.removeFromWorld();
+  }
+  explode() {
+    explosion.play();
+    gameObjects.push(new Explosion(this.position, 0, 0, this.size));
+  }
+}
+
+class Rock extends GoesKaboom {
   removeFromWorld(){
     super.removeFromWorld();
     // create smaller asteroids
-    if (this.size > height / 25) { 
+    if (this.size > height / 25) {
       gameObjects.push(
         new Rock(this.viewBox, this.shapes, this.position, 5, this.angle + radians(45), this.size / 2),
         new Rock(this.viewBox, this.shapes, this.position, 5, this.angle + radians(270), this.size / 2)
       );
+      return;
     }
+    gameObjects.push(objectFactory.createPowerUp(this.position, this.speed));
   }
 }
 
-class Vehicle extends SVGPaths {
+class Vehicle extends GoesKaboom {
   constructor(viewBox, shapes, position, speed, angle, size) {
     super(viewBox, shapes, position, speed, angle, size);
+    this.power = 10;
   }
   getNozzlePosition(){
     const radiusVector = p5.Vector.fromAngle(-this.angle + radians(270));
@@ -178,9 +199,12 @@ class Vehicle extends SVGPaths {
     radiusVector.mult(this.radius);
     return p5.Vector.add(this.position, radiusVector);
   }
-  fire(){   
+  fire(){
+    if (this.power >= 0) {
     gameObjects.push(new Bullet(this.getNozzlePosition(), BULLET_SPEED, this.angle, BULLET_SIZE));
-    // blaster.play();
+    this.power -= 0.3;
+    blaster.play();
+    }
   }
 }
 class Craft extends Vehicle {
@@ -211,10 +235,13 @@ class Craft extends Vehicle {
       this.angle -= TURN_SPEED;
     }
     if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
-      this.emitter.addParticle(this.geExaustPosition());
-      this.speed = CRAFT_SPEED;
-      if (!burn.isPlaying()) {
-        burn.play();
+      if (this.power >=0){
+        this.emitter.addParticle(this.geExaustPosition());
+        this.speed = CRAFT_SPEED;
+        if (!burn.isPlaying()) {
+          burn.play();
+        }
+        this.power -= 0.01;
       }
     } else {
       this.speed = 0;
@@ -232,6 +259,11 @@ class Craft extends Vehicle {
 class EnemyCraft extends Vehicle {
   constructor(viewBox, shapes, position, speed, angle, size) {
     super(viewBox, shapes, position, speed, angle, size);
+  }
+  removeFromWorld(){
+      super.removeFromWorld();
+      gameObjects.push(objectFactory.createPowerUp(this.position, this.speed));
+
   }
   handleMovement() {
     // make the craft face the player
@@ -369,38 +401,53 @@ class Emitter {
 }
 
 class PowerSlot {
-  constructor(){
-    this.full = false;
-    this.width = width / 10;
-    this.height = this.height / 10;
-    this.x = random(0, width - this.width);
-    this.y = random(0, height - this.height);
+  constructor(position, index){
+    this.index = index;
+    this.width = CANVAS_SIZE / 50;
+    this.height = CANVAS_SIZE / 50;
+    this.x = position.x;
+    this.y = position.y;
   }
   draw(){
     // draw a rectangle within a rectange
-    fill(255, 255, 255, 100);
-    noStroke();
+    fill(255, 150);
+    // noStroke();
     rect(this.x, this.y, this.width, this.height);
-    fill(255, 255, 255, 255);
-    noStroke();
-    rect(this.x, this.y, this.width, this.height);
+    fill(255, 255, 0, 150); 
+    // noStroke();
+    if (this.index <= craft.power){
+      const offset = this.width * 0.15;
+      const r = craft.power - floor(craft.power);
+      // console.log(r);
+      if (this.index < craft.power - 1 || Math.abs(craft.power % 1) > 1) {
+        rect(this.x + offset, this.y + offset, this.width * 0.7, this.height * 0.7);
+      } else {
+        rect(this.x + offset, this.y + offset, this.width * 0.7, this.height * 0.7 * r);
+      }
+    }
   }
 }
 
 class PowerBar {
   constructor() {
-    this.power = 0;
+    this.y = height - CANVAS_SIZE / 10;
     this.slots = [];
         // create a rectangle that is composed of 10 power slots
+        const w = width / 50; 
         for (let i = 0; i < 10; i++) {
-          this.slots[i] = new PowerSlot();
+          this.slots[i] = new PowerSlot(createVector(width / 2 - w * 5 + w * i, this.y), i);
         }
   }
 
   draw(){
+    fill(255, 150);
+    text('power', width / 2, this.y - CANVAS_SIZE / 50);
     this.slots.forEach((slot) => {
       slot.draw();
     });
+    if (craft.power <= 0){
+      endgame = 'Out of power!';
+    }
   }
 
 }
