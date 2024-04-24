@@ -11,11 +11,42 @@ class Entity {
     this.collides = false;
     this.emitter = new Emitter(this.position);
   }
+  equals(other) {
+    const className = this.constructor.name;
+    return className === other.constructor.name && this.speed === other.speed && this.angle === other.angle && this.position.equals(other.position);
+  }
   checkCollision() { }
   handleMovement() { }
 
   removeFromWorld() {
-    gameObjects.splice(gameObjects.indexOf(this), 1);
+    objectsOnScreen.splice(objectsOnScreen.indexOf(this), 1);
+    store.remove(this);
+  }
+
+  isInsideSquare(x1, y1, x2, y2) {
+    // Check if the circle's center is inside the square
+    if (this.position.x > x1 && this.position.x < x2 && this.position.y > y1 && this.position.y < y2) {
+      return true;
+    }
+    // Check if any part of the circle is inside the square
+    let corners = [
+      createVector(x1, y1),
+      createVector(x1, y2),
+      createVector(x2, y1),
+      createVector(x2, y2)
+    ];
+    for (let corner of corners) {
+      if (p5.Vector.dist(this.position, corner) <= this.radius) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getPositionOffset() {
+    const p = this.position.copy();
+    p.sub(store.screenTopLeftCorner);
+    return p;
   }
   draw(){
     if (this.emitter.particles.length > 0) {
@@ -61,11 +92,6 @@ class GameObject extends Entity {
     }
   }
   handleMovement(friction = true) {
-    if (this.position.x < -this.radius) this.position.x = width + this.radius;
-    if (this.position.y < -this.radius) this.position.y = height + this.radius;
-    if (this.position.x > width + this.radius) this.position.x = -this.radius;
-    if (this.position.y > height + this.radius) this.position.y = -this.radius;
-
     let directionVector = p5.Vector.fromAngle(-this.angle + radians(270));
     directionVector.setMag(this.speed);
     this.acceleration.add(directionVector);
@@ -121,14 +147,13 @@ class SVGPaths extends GameObject {
     const v = createVector(this.width / 2, this.height / 2);
     const pos = v.copy().rotate(this.angle).sub(v);
     const offset = createVector(this.radius, this.radius); 
-    const p = this.position.copy().sub(offset);
+    const p = this.getPositionOffset().sub(offset);
 
     ctx.setTransform(this.scaleX * cos, this.scaleX * -sin, this.scaleY * sin, this.scaleY * cos, p.x, p.y);
     ctx.translate(pos.x, pos.y);
 
     this.shapes.forEach(shape => {
-    
-      const path =  new Path2D(shape.path);
+      const path = new Path2D(shape.path);
       const color = shape.fill;
       color ? colorOverride ? fill(colorOverride) : fill(color) : fill(255);
       
@@ -165,7 +190,7 @@ class GoesKaboom extends SVGPaths {
   }
   explode() {
     explosion.play();
-    gameObjects.push(new Explosion(this.position, 0, 0, this.size));
+    objectsOnScreen.push(new Explosion(this.position, 0, 0, this.size));
   }
 }
 
@@ -174,13 +199,16 @@ class Rock extends GoesKaboom {
     super.removeFromWorld();
     // create smaller asteroids
     if (this.size > height / 25) {
-      gameObjects.push(
-        new Rock(this.viewBox, this.shapes, this.position, 5, this.angle + radians(45), this.size / 2),
-        new Rock(this.viewBox, this.shapes, this.position, 5, this.angle + radians(270), this.size / 2)
+      const r1 = objectFactory.createRock(this.position, 5, this.angle + radians(45), this.size / 2);
+      const r2 = objectFactory.createRock(this.position, 5, this.angle + radians(270), this.size / 2);
+      objectsOnScreen.push(
+        r1, r2
       );
+      store.add(r1);
+      store.add(r2);
       return;
     }
-    gameObjects.push(objectFactory.createPowerUp(this.position, this.speed));
+    objectsOnScreen.push(objectFactory.createPowerUp(this.position, this.speed));
   }
 }
 
@@ -201,7 +229,8 @@ class Vehicle extends GoesKaboom {
   }
   fire(){
     if (this.power >= 0) {
-    gameObjects.push(new Bullet(this.getNozzlePosition(), BULLET_SPEED, this.angle, BULLET_SIZE));
+      
+    objectsOnScreen.push(new Bullet(this.getNozzlePosition(), BULLET_SPEED, this.angle, BULLET_SIZE));
     this.power -= 0.3;
     blaster.play();
     }
@@ -217,10 +246,28 @@ class Craft extends Vehicle {
     super.handleCollision(dist, gameObject);
     burn.stop();
   }
-
   handleMovement() {
     super.handleMovement();
 
+    const multiplierX = (store.screenTopLeftCorner.x / width) + 1;
+    const multiplierY = (store.screenTopLeftCorner.y / height) + 1;
+    // move the screen
+    if (this.position.x < store.screenTopLeftCorner.x ) {
+      store.screenTopLeftCorner.x -= width;
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, { x: store.screenTopLeftCorner.x + width, y: store.screenTopLeftCorner.y + height });
+    }
+    if (this.position.y < store.screenTopLeftCorner.y ) {
+      store.screenTopLeftCorner.y -= height;
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, { x: store.screenTopLeftCorner.x + width, y: store.screenTopLeftCorner.y + height });
+    } 
+    if (this.position.x > width * multiplierX)  {
+      store.screenTopLeftCorner.x += width;
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, { x: store.screenTopLeftCorner.x + width, y: store.screenTopLeftCorner.y + height });
+    }
+    if (this.position.y > height * multiplierY ) {
+      store.screenTopLeftCorner.y += height;
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, { x: store.screenTopLeftCorner.x + width, y: store.screenTopLeftCorner.y + height });
+    }
     // Check for cursor keys
     if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
       if (this.angle >= 2 * Math.PI) {
@@ -262,12 +309,13 @@ class EnemyCraft extends Vehicle {
   }
   removeFromWorld(){
       super.removeFromWorld();
-      gameObjects.push(objectFactory.createPowerUp(this.position, this.speed));
+      objectsOnScreen.push(objectFactory.createPowerUp(this.position, this.speed));
 
   }
   handleMovement() {
     // make the craft face the player
-    if (!endgame){
+    const dist = p5.Vector.dist(this.position, craft.position);
+    if (!endgame && dist < CHASE_DISTANCE ){
       const angle = p5.Vector.sub(this.position, craft.position).heading();
       this.angle = -angle - radians(270);
       // move the craft
@@ -277,11 +325,8 @@ class EnemyCraft extends Vehicle {
         this.fire();
       }
     }
-
     super.handleMovement();
- 
   }
-
 }
 class Bullet extends GameObject {
   constructor(position, speed, angle, size) {
@@ -306,20 +351,20 @@ class Bullet extends GameObject {
       gameObject.removeFromWorld();
     }
   }
-  draw(ctx) {
+  draw() {
     fill('red');
-    ellipse(this.position.x, this.position.y, this.radius * 2);
+    const p = this.getPositionOffset();
+    ellipse(p.x, p.y, this.radius * 2);
   }
 }
 
 class Star extends Entity {
-  constructor(position, speed, angle, size, color) {
-    super(position, speed, angle, size);
-    this.color = color;
-  }
+
   draw() {
     fill(255);
-    ellipse(this.position.x, this.position.y, this.size, this.size);
+    // const p = this.getPositionOffset();
+    const p = this.position;
+    ellipse(p.x, p.y, this.size, this.size);
   }
 }
 
@@ -352,20 +397,14 @@ class Particle extends Entity {
 
   // Method to draw
   show() {
-    // tint(255, this.lifespan);
-    // imageMode(CENTER);
+    const p = this.getPositionOffset();
 
-    // image(img, this.position.x, this.position.y);
-   
-    // Drawing a circle instead
     fill(248,231, 190, this.lifespan / 4);
     noStroke();
-    circle(this.position.x, this.position.y, this.size);
-    circle(this.position.x, this.position.y, this.size * 0.9);
-    circle(this.position.x, this.position.y, this.size * 0.8);
-    circle(this.position.x, this.position.y, this.size * 0.7);
-    // circle(this.position.x, this.position.y, this.size * 0.6);
-    // circle(this.position.x, this.position.y, this.size * 0.5);
+    circle(p.x, p.y, this.size);
+    circle(p.x, p.y, this.size * 0.9);
+    circle(p.x, p.y, this.size * 0.8);
+    circle(p.x, p.y, this.size * 0.7);
   }
 
   // Is the particle still useful?
@@ -418,7 +457,7 @@ class PowerSlot {
     if (this.index <= craft.power){
       const offset = this.width * 0.15;
       const r = craft.power - floor(craft.power);
-      // console.log(r);
+
       if (this.index < craft.power - 1 || Math.abs(craft.power % 1) > 1) {
         rect(this.x + offset, this.y + offset, this.width * 0.7, this.height * 0.7);
       } else {

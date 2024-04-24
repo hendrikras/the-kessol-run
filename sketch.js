@@ -1,5 +1,5 @@
 
-let boom, blaster, burn, charge, craft, emitter, endgame, explosion, gameObjects, objectFactory, powerBar;
+let boom, blaster, burn, charge, craft, emitter, endgame, explosion, objectsOnScreen, objectFactory, powerBar, store;
 
 function preload() {
 
@@ -41,9 +41,9 @@ class GameObjectFactory {
     return new EnemyCraft(viewbox, shapes, position, 0, 0, CRAFT_SIZE / 1.6);
   }
 
-  createRock(position) {
+  createRock(position, speed = 0, angle = radians(200), size = ROCK_SIZE) {
     const [shapes, viewbox] = this.asteroidShapes;
-    return new Rock(viewbox, shapes, position, ROCK_SPEED, radians(200), ROCK_SIZE);
+    return new Rock(viewbox, shapes, position, speed, angle, size);
   }
 
   createPowerUp(position, speed) {
@@ -52,23 +52,55 @@ class GameObjectFactory {
   }
 }
 
+class CoordinateStore {
+  constructor() {
+     this.coordinates = [];
+     this.screenTopLeftCorner = createVector(0, 0);
+  }
+ 
+  add(object) {
+     this.coordinates.push(object);
+  }
+
+  remove(object){ 
+    // remove the object from the array
+    this.coordinates = this.coordinates.filter((point) =>!point.equals(object));
+  }
+ 
+  getPointsInsideSquare({x:x1, y: y1}, {x:x2, y: y2}) {
+    return [...this.generateStars(), ...this.coordinates.filter(point => point.isInsideSquare(x1, y1, x2, y2))];
+ }
+
+  generateStars(){
+    const stars = [];
+    const {x, y} = this.screenTopLeftCorner;
+    randomSeed(x * 10000 + y); // Create a unique seed from x and y
+
+    // Initialize stars
+    for (let i = 0; i < STAR_COUNT; i++) {
+      stars.push(new Star({ x: random(width), y: random(height) }, 0, 0, random(STAR_SIZE, STAR_SIZE / 2)));
+    }
+
+    return stars;
+  }
+}
+ 
+
 function setup() {
   textAlign(CENTER);
   createCanvas(innerWidth, innerHeight);
 
   objectFactory = new GameObjectFactory();
+  store = new CoordinateStore();
 
   craft = objectFactory.createCraft();;
   powerBar = new PowerBar();
-  gameObjects = [];
 
-  // Initialize stars
-  for (let i = 0; i < STAR_COUNT; i++) {
-    gameObjects.push(new Star({ x: random(innerWidth), y: random(innerHeight) }, 0, 0, random(STAR_SIZE, STAR_SIZE / 2)));
-  }
   // The first asteroid
-  gameObjects.push(objectFactory.createRock({ x: CANVAS_SIZE / 5, y: CANVAS_SIZE / 5 }));
-  gameObjects.push(objectFactory.createEnemyCraft({ x: CANVAS_SIZE , y: CANVAS_SIZE / 10 }));
+  store.add(objectFactory.createRock({ x: CANVAS_SIZE / 5, y: CANVAS_SIZE / 5 }));
+  store.add(objectFactory.createRock({ x: CANVAS_SIZE * 2, y: CANVAS_SIZE / 5 }));
+  store.add(objectFactory.createEnemyCraft({ x: CANVAS_SIZE , y: CANVAS_SIZE / 10 }));
+  objectsOnScreen = store.getPointsInsideSquare({ x: 0, y: 0 }, { x: width, y: height });
 }
 
 function draw() {
@@ -77,23 +109,18 @@ function draw() {
   textSize(30);
 
   const ctx = drawingContext;
+  objectsOnScreen.forEach((object, i) => {
+    object.checkCollision(craft);
+    object.handleMovement();
 
-  if (gameObjects.some(object => object instanceof SVGPaths)) {
-    gameObjects.forEach((object, i) => {
-      object.checkCollision(craft);
-      object.handleMovement();
-
-      gameObjects.forEach((other, index) => {
-        if (index !== i && object.collides && other.collides) {
-          object.checkCollision(other);
-        }
-        object.speed = 0;
-      });
-      object.draw(ctx);
+    objectsOnScreen.forEach((other, index) => {
+      if (index !== i && object.collides && other.collides) {
+        object.checkCollision(other);
+      }
+      object.speed = 0;
     });
-  } else {
-    endgame = 'You Win';
-  }
+    object.draw(ctx);
+  });
   if (endgame) {
     fill(255);
     text(endgame, innerWidth / 2, innerHeight / 2);
@@ -101,7 +128,6 @@ function draw() {
     craft.handleMovement();
     craft.draw(ctx);
   }
-
   powerBar.draw();  
 }
 
