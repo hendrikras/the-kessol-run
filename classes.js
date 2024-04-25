@@ -80,14 +80,22 @@ class GameObject extends Entity {
     this.collides = true;
   }
 
-  checkCollision(gameObject) {
+  isCollision(gameObject) {
     const dist = p5.Vector.sub(gameObject.position, this.position);
     if (dist.mag() <= gameObject.radius + this.radius) {
+      return dist;
+    }
+    return null;
+  }
+  checkCollision(gameObject) {
+    const dist = this.isCollision(gameObject);
+    if (dist) {
       this.handleCollision(dist, gameObject);
     }
   }
   handleCollision(dist, gameObject) {
     if (gameObject instanceof Craft) {
+      gameObject.explode();
       endgame = 'Game Over';
     }
   }
@@ -155,7 +163,7 @@ class SVGPaths extends GameObject {
     this.shapes.forEach(shape => {
       const path = new Path2D(shape.path);
       const color = shape.fill;
-      color ? colorOverride ? fill(colorOverride) : fill(color) : fill(255);
+      colorOverride ? fill(colorOverride) : fill(color);
       
       ctx.fill(path);
     });
@@ -180,6 +188,22 @@ class PowerUp extends SVGPaths {
     // glow up every second
     const x = sin(TWO_PI * frameCount / 50);
     super.draw(ctx, color(170, map(x, -1, 1, 250, 125), map(x, -1, 1, 255, 100)));
+  }
+}
+
+class Pointer extends SVGPaths {
+  handleCollision() {}
+  draw(ctx){
+    // glow up every second
+    const x = sin(TWO_PI * frameCount / 50);
+    super.draw(ctx, color(170, map(x, -1, 1, 250, 125), map(x, -1, 1, 255, 100)));
+  }
+}
+class Target extends Pointer {
+  handleCollision (_, gameObject) {
+    if (gameObject instanceof Craft) {
+      endgame = 'You made it!';
+    }
   }
 }
 
@@ -226,6 +250,23 @@ class Vehicle extends GoesKaboom {
     const radiusVector = p5.Vector.fromAngle(-this.angle - radians(270));
     radiusVector.mult(this.radius);
     return p5.Vector.add(this.position, radiusVector);
+  }
+  getTargetPosition(angle){
+    const radiusVector = p5.Vector.fromAngle(angle);
+    let distance = p5.Vector.dist(craft.position, target.position);
+    if (distance < CANVAS_SIZE * 0.5){
+      distance *= 0.3;
+    }
+    radiusVector.mult(distance);
+    const result = p5.Vector.add(this.position, radiusVector);
+    if (result.x > store.screenTopLeftCorner.x + width){
+      result.x = (store.screenTopLeftCorner.x + width) - (this.radius * 2);
+    }
+
+    if (result.y > store.screenTopLeftCorner.y + height){
+      result.y = (store.screenTopLeftCorner.y + height) - (this.radius * 2);
+    }
+    return result;
   }
   fire(){
     if (this.power >= 0) {

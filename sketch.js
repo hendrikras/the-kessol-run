@@ -1,5 +1,5 @@
 
-let boom, blaster, burn, charge, craft, emitter, endgame, explosion, objectsOnScreen, objectFactory, powerBar, store;
+let boom, blaster, burn, charge, craft, emitter, endgame, explosion, objectsOnScreen, objectFactory, powerBar, store, target, pointer;
 
 function preload() {
 
@@ -25,6 +25,8 @@ class GameObjectFactory {
     this.asteroidShapes = this.getElements('#asteroid');
     this.enemyShapes = this.getElements('#PI-Fighter');
     this.powerUpShapes = this.getElements('#power-up');
+    this.pointerShapes = this.getElements('#Target');
+    this.goalShapes = this.getElements('#Goal');
   }
   getElements(id){
     const element = select(id).elt;
@@ -49,6 +51,16 @@ class GameObjectFactory {
   createPowerUp(position, speed) {
     const [shapes, viewbox] = this.powerUpShapes;
     return new PowerUp(viewbox, shapes, position, speed, 0, CRAFT_SIZE / 2);
+  }
+
+  createPointer(position, speed) {
+    const [shapes, viewbox] = this.pointerShapes;
+    return new Pointer(viewbox, shapes, position, speed, 0, CRAFT_SIZE / 1.8);
+  }
+
+  createGoal(position) {
+    const [shapes, viewbox] = this.goalShapes;
+    return new Target(viewbox, shapes, position, 0, 0, CRAFT_SIZE / 2);
   }
 }
 
@@ -101,6 +113,8 @@ function setup() {
   store.add(objectFactory.createRock({ x: CANVAS_SIZE * 2, y: CANVAS_SIZE / 5 }));
   store.add(objectFactory.createEnemyCraft({ x: CANVAS_SIZE , y: CANVAS_SIZE / 10 }));
   objectsOnScreen = store.getPointsInsideSquare({ x: 0, y: 0 }, { x: width, y: height });
+  pointer = objectFactory.createPointer({ x: CANVAS_SIZE * 3, y: CANVAS_SIZE * 1.5 });
+  target = objectFactory.createGoal({ x: CANVAS_SIZE * 3, y: CANVAS_SIZE * 1.5 });
 }
 
 function draw() {
@@ -128,7 +142,17 @@ function draw() {
     craft.handleMovement();
     craft.draw(ctx);
   }
-  powerBar.draw();  
+  powerBar.draw();
+
+  // get the angle between the craft and the target
+  const angle = target.position.copy().sub(craft.position).heading();
+  // flip horizontally and vertically
+  pointer.angle = -angle - radians(90);
+  pointer.position = craft.getTargetPosition(angle);
+
+  pointer.draw(ctx);
+  target.draw(ctx);
+  target.checkCollision(craft);
 }
 
 function keyPressed() {
