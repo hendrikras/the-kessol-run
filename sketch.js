@@ -27,6 +27,7 @@ class GameObjectFactory {
     this.powerUpShapes = this.getElements('#power-up');
     this.pointerShapes = this.getElements('#Target');
     this.goalShapes = this.getElements('#Goal');
+    this.mineShapes = this.getElements('#mine');
   }
   getElements(id){
     const element = select(id).elt;
@@ -46,6 +47,11 @@ class GameObjectFactory {
   createRock(position, speed = 0, angle = radians(200), size = ROCK_SIZE) {
     const [shapes, viewbox] = this.asteroidShapes;
     return new Rock(viewbox, shapes, position, speed, angle, size);
+  }
+
+  createMine(position) {
+    const [shapes, viewbox] = this.mineShapes;
+    return new Mine(viewbox, shapes, position, 0, 0, CRAFT_SIZE);
   }
 
   createPowerUp(position, speed) {
@@ -112,6 +118,7 @@ function setup() {
   store.add(objectFactory.createRock({ x: CANVAS_SIZE / 5, y: CANVAS_SIZE / 5 }));
   store.add(objectFactory.createRock({ x: CANVAS_SIZE * 2, y: CANVAS_SIZE / 5 }));
   store.add(objectFactory.createEnemyCraft({ x: CANVAS_SIZE , y: CANVAS_SIZE / 10 }));
+  store.add(objectFactory.createMine( { x: CANVAS_SIZE / 4, y: CANVAS_SIZE / 2 }));
   objectsOnScreen = store.getPointsInsideSquare({ x: 0, y: 0 }, { x: width, y: height });
   pointer = objectFactory.createPointer({ x: CANVAS_SIZE * 3, y: CANVAS_SIZE * 1.5 });
   target = objectFactory.createGoal({ x: CANVAS_SIZE * 3, y: CANVAS_SIZE * 1.5 });
@@ -126,6 +133,7 @@ function draw() {
   objectsOnScreen.forEach((object, i) => {
     object.checkCollision(craft);
     object.handleMovement();
+    // object.applyGravity(craft);
 
     objectsOnScreen.forEach((other, index) => {
       if (index !== i && object.collides && other.collides) {

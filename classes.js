@@ -10,6 +10,7 @@ class Entity {
     this.size = size;
     this.collides = false;
     this.emitter = new Emitter(this.position);
+    this.mass = 10;
   }
   equals(other) {
     const className = this.constructor.name;
@@ -23,8 +24,27 @@ class Entity {
     store.remove(this);
   }
 
+  applyForce(force) {
+    this.acceleration.add(force);
+  }
+
+  applyGravity(body, repel = false) {
+    let force = p5.Vector.sub(this.position, body.position);
+    const min = 10;
+    const max = 30;
+
+    console.log(min, max, force.mag());
+
+    let d = constrain(force.mag(), min, max);
+    const G = Math.min(width, height) / 900; // Example: scale G based on screen size, adjust 500 to suit game balance
+ 
+    let strength = (G * (this.mass * body.mass)) / (d * d);
+    force.setMag(repel ? - strength : strength);
+    body.applyForce(force);
+  }
+
   isInsideSquare(x1, y1, x2, y2) {
-    // Check if the circle's center is inside the square
+    // Check if the circle's center is inside the square  
     if (this.position.x > x1 && this.position.x < x2 && this.position.y > y1 && this.position.y < y2) {
       return true;
     }
@@ -56,18 +76,29 @@ class Entity {
 }
 
 class Explosion extends Entity {
-  constructor(position, speed, angle, size) {
+  constructor(position, speed, angle, size, mass, shockwave = false) {
     super(position, speed, angle, size);
     this.collides = false;
     this.lifespan = Math.sqrt(this.size) * 1.6;
+    this.mass = mass;
+    this.shockwave = shockwave;
   }
   handleMovement(){
-    if (this.lifespan > 0){
+    if (this.lifespan > 0){ 
       this.lifespan -= 2;
       for(let i = 0; i < 5; i++) {
         this.emitter.addParticle();
-        this.emitter.particles.at(-1).applyForce(p5.Vector.random2D().mult(Math.sqrt(this.size)));
+        this.emitter.particles.at(-1).applyForce(p5.Vector.random2D().mult(Math.sqrt(this.shockwave ? this.size * 2 : this.size)));
      }
+      objectsOnScreen
+      .filter(object => p5.Vector.dist(object.position, this.position) < CANVAS_SIZE * 0.7)
+      .forEach((object) => {
+      if (!object.equals(this) && object instanceof SVGPaths){
+        this.applyGravity(object, true);
+      }
+     });
+     this.applyGravity(craft, true);
+      
      return;
     }
     this.removeFromWorld();
@@ -95,8 +126,10 @@ class GameObject extends Entity {
   }
   handleCollision(dist, gameObject) {
     if (gameObject instanceof Craft) {
-      gameObject.explode();
-      endgame = 'Game Over';
+      if (!endgame){
+        gameObject.explode();
+        endgame = 'Game Over';
+      }
     }
   }
   handleMovement(friction = true) {
@@ -173,6 +206,10 @@ class SVGPaths extends GameObject {
 }
 
 class PowerUp extends SVGPaths {
+  constructor(viewBox, shapes, position, speed, angle, size) {
+    super(viewBox, shapes, position, speed, angle, size);
+    this.collides = false;
+  }
   removeFromWorld(){
     charge.play();
     super.removeFromWorld();
@@ -210,11 +247,30 @@ class Target extends Pointer {
 class GoesKaboom extends SVGPaths {
   removeFromWorld(){
     this.explode();
+    
     super.removeFromWorld();
   }
   explode() {
     explosion.play();
-    objectsOnScreen.push(new Explosion(this.position, 0, 0, this.size));
+    objectsOnScreen.push(new Explosion(this.position, 0, 0, this.size, 10));
+  }
+}
+
+class Mine extends GoesKaboom {
+  constructor(viewBox, shapes, position, speed, angle, size) {
+    super(viewBox, shapes, position, speed, angle, size);
+    // this.mass = 2;
+  }
+
+  handleCollision(dist, gameObject) {
+    this.removeFromWorld();
+    gameObject.removeFromWorld();
+    super.handleCollision(dist, gameObject);
+  }
+
+  explode() {
+    explosion.play();
+    objectsOnScreen.push(new Explosion(this.position, 0, 0, this.size, 80, true));
   }
 }
 
@@ -282,6 +338,7 @@ class Craft extends Vehicle {
     super(viewBox, shapes, position, speed, angle, size);
     this.nozzle = this.position.copy();
     this.exaust = this.getNozzlePosition();
+    // this.mass = 0.5;
   }
   handleCollision(dist, gameObject) {
     super.handleCollision(dist, gameObject);
@@ -420,12 +477,6 @@ class Particle extends Entity {
   run() {
     this.update();
     this.show();
-  }
-
-  // Method to apply a force vector to the Particle object
-  // Note we are ignoring "mass" here
-  applyForce(force) {
-    this.acceleration.add(force);
   }
 
   // Method to update position
