@@ -1,5 +1,5 @@
 
-let boom, blaster, burn, charge, craft, emitter, endgame, explosion, objectsOnScreen, objectFactory, powerBar, store, target, pointer;
+let boom, blaster, burn, charge, craft, emitter, endgame, explosion, objectsOnScreen, objectFactory, powerBar, store, singularities, target, pointer;
 
 function preload() {
 
@@ -28,6 +28,7 @@ class GameObjectFactory {
     this.pointerShapes = this.getElements('#Target');
     this.goalShapes = this.getElements('#Goal');
     this.mineShapes = this.getElements('#mine');
+    this.map = select('#map').elt.children;
   }
   getElements(id){
     const element = select(id).elt;
@@ -39,9 +40,9 @@ class GameObjectFactory {
     return new Craft(viewbox, shapes, { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 }, 0, 0, CRAFT_SIZE);
   }
 
-  createEnemyCraft(position) {
+  createEnemyCraft(position, angle) {
     const [shapes, viewbox] = this.enemyShapes;
-    return new EnemyCraft(viewbox, shapes, position, 0, 0, CRAFT_SIZE / 1.6);
+    return new EnemyCraft(viewbox, shapes, position, 0, angle, CRAFT_SIZE / 1.6);
   }
 
   createRock(position, speed = 0, angle = radians(200), size = ROCK_SIZE) {
@@ -68,6 +69,10 @@ class GameObjectFactory {
     const [shapes, viewbox] = this.goalShapes;
     return new Target(viewbox, shapes, position, 0, 0, CRAFT_SIZE / 2);
   }
+
+  createSingularity(position) {
+    return new Singularity(position, 0, 0, CRAFT_SIZE / 2);
+  }
 }
 
 class CoordinateStore {
@@ -86,7 +91,8 @@ class CoordinateStore {
   }
  
   getPointsInsideSquare({x:x1, y: y1}, {x:x2, y: y2}) {
-    return [...this.generateStars(), ...this.coordinates.filter(point => point.isInsideSquare(x1, y1, x2, y2))];
+    const objectsLeftMoving = objectsOnScreen.filter((point) => point.isMoving());
+    return [...this.generateStars(), ...objectsLeftMoving,...this.coordinates.filter(point => point.isInsideSquare(x1, y1, x2, y2))];
  }
 
   generateStars(){
@@ -102,7 +108,6 @@ class CoordinateStore {
     return stars;
   }
 }
- 
 
 function setup() {
   textAlign(CENTER);
@@ -113,15 +118,56 @@ function setup() {
 
   craft = objectFactory.createCraft();;
   powerBar = new PowerBar();
+  singularities = [];
+  objectsOnScreen = [];
+  let unit, offset;
 
-  // The first asteroid
-  store.add(objectFactory.createRock({ x: CANVAS_SIZE / 5, y: CANVAS_SIZE / 5 }));
-  store.add(objectFactory.createRock({ x: CANVAS_SIZE * 2, y: CANVAS_SIZE / 5 }));
-  store.add(objectFactory.createEnemyCraft({ x: CANVAS_SIZE , y: CANVAS_SIZE / 10 }));
-  store.add(objectFactory.createMine( { x: CANVAS_SIZE / 4, y: CANVAS_SIZE / 2 }));
+  // Initialize world obnjects
+  objectFactory.map.forEach((el) => {
+    switch (el.tagName) {
+      case 'rect': // start screen position
+      const w = el.getAttribute('width');
+      const x = el.getAttribute('x');
+      const y = el.getAttribute('y');
+   
+      unit = CANVAS_SIZE / w;
+      offset = createVector(x * unit, y * unit);
+      break;
+      case 'circle': // asteroids
+        const cx = el.getAttribute('cx');
+        const cy = el.getAttribute('cy');
+        const r = el.getAttribute('r');
+        store.add(objectFactory.createRock(createVector(cx * unit, cy * unit ).sub(offset), 0, 0, r * unit));
+        break;
+      case 'line': // enemies
+        const x1 = el.getAttribute('x1');
+        const y1 = el.getAttribute('y1');
+        const x2 = el.getAttribute('x2');
+        const y2 = el.getAttribute('y2');
+        const angle = atan2(y2 - y1, x2 - x1);
+        store.add(objectFactory.createEnemyCraft(createVector(x1 * unit, y1 * unit ).sub(offset), angle));
+        break;
+      case 'ellipse': // mines
+        const cxe = el.getAttribute('cx');
+        const cye = el.getAttribute('cy');
+        store.add(objectFactory.createMine(createVector(cxe* unit, cye * unit ).sub(offset)));
+        break;
+      case 'polygon': // Targets
+        const points = el.getAttribute('points').split(' ');
+        target = objectFactory.createGoal(createVector(points[0] * unit, points[1]  * unit ).sub(offset));
+        break
+       default: // text elements
+        const text = el.children[0];
+        if(text.innerHTML === 'S'){
+          singularities.push(objectFactory.createSingularity(createVector( text.getAttribute('x') * unit,  text.getAttribute('y')  * unit ).sub(offset)));
+          break;
+        }
+        store.add(objectFactory.createPowerUp(createVector( text.getAttribute('x') * unit,  text.getAttribute('y')  * unit ).sub(offset), 0));
+    }
+  });
   objectsOnScreen = store.getPointsInsideSquare({ x: 0, y: 0 }, { x: width, y: height });
   pointer = objectFactory.createPointer({ x: CANVAS_SIZE * 3, y: CANVAS_SIZE * 1.5 });
-  target = objectFactory.createGoal({ x: CANVAS_SIZE * 3, y: CANVAS_SIZE * 1.5 });
+ 
 }
 
 function draw() {
@@ -133,7 +179,6 @@ function draw() {
   objectsOnScreen.forEach((object, i) => {
     object.checkCollision(craft);
     object.handleMovement();
-    // object.applyGravity(craft);
 
     objectsOnScreen.forEach((other, index) => {
       if (index !== i && object.collides && other.collides) {
@@ -141,6 +186,7 @@ function draw() {
       }
       object.speed = 0;
     });
+    
     object.draw(ctx);
   });
   if (endgame) {
@@ -150,6 +196,10 @@ function draw() {
     craft.handleMovement();
     craft.draw(ctx);
   }
+  singularities.forEach((singularity) => {
+    singularity.draw(ctx);
+    singularity.handleMovement();
+  });
   powerBar.draw();
 
   // get the angle between the craft and the target

@@ -24,6 +24,11 @@ class Entity {
     store.remove(this);
   }
 
+  isMoving() {
+    // returns true if the object is moving
+    return this.velocity.mag() > 0.01;
+  }
+
   applyForce(force) {
     this.acceleration.add(force);
   }
@@ -33,10 +38,8 @@ class Entity {
     const min = 10;
     const max = 30;
 
-    console.log(min, max, force.mag());
-
     let d = constrain(force.mag(), min, max);
-    const G = Math.min(width, height) / 900; // Example: scale G based on screen size, adjust 500 to suit game balance
+    const G = CANVAS_SIZE / 900; // scale G based on screen size
  
     let strength = (G * (this.mass * body.mass)) / (d * d);
     force.setMag(repel ? - strength : strength);
@@ -105,6 +108,45 @@ class Explosion extends Entity {
   }
 }
 
+
+class Singularity extends Entity {
+  constructor(position, speed, angle, size) {
+    super(position, speed, angle, size);
+    this.collides = false;
+    this.mass = 1;
+    this.range = 0.7
+  }
+  handleMovement(){
+      objectsOnScreen
+      .filter(object => p5.Vector.dist(object.position, this.position) < CANVAS_SIZE * this.range)
+      .forEach((object) => {
+      if (!object.equals(this) && object instanceof SVGPaths){
+        this.applyGravity(object);
+        object.checkCollision(this);
+      }
+     });
+     const craftRange = p5.Vector.dist(craft.position, this.position);
+     if (craftRange < CANVAS_SIZE * this.range) {
+      if (craftRange < this.size) {
+        endgame = 'Game Over';
+        return;
+      }
+      this.applyGravity(craft);
+      craft.checkCollision(this);
+     }
+  }
+  handleCollision(object){
+    object.removeFromWorld();
+  }
+  draw() {
+    const p = this.getPositionOffset();
+
+    fill(0);
+    noStroke();
+    circle(p.x, p.y, this.size);
+  }
+}
+
 class GameObject extends Entity {
   constructor(position, speed, angle, size) {
     super(position, speed, angle, size);
@@ -130,6 +172,11 @@ class GameObject extends Entity {
         gameObject.explode();
         endgame = 'Game Over';
       }
+    }
+    if (gameObject instanceof Singularity) {
+      gameObject.removeFromWorld();
+      gameObject.mass += 1;
+      gameObject.size += CRAFT_SIZE / 2;
     }
   }
   handleMovement(friction = true) {
@@ -288,7 +335,9 @@ class Rock extends GoesKaboom {
       store.add(r2);
       return;
     }
-    objectsOnScreen.push(objectFactory.createPowerUp(this.position, this.speed));
+    const powerup = objectFactory.createPowerUp(this.position.copy(), this.speed);
+    objectsOnScreen.push(powerup);
+    store.add(powerup);
   }
 }
 
@@ -318,9 +367,14 @@ class Vehicle extends GoesKaboom {
     if (result.x > store.screenTopLeftCorner.x + width){
       result.x = (store.screenTopLeftCorner.x + width) - (this.radius * 2);
     }
-
     if (result.y > store.screenTopLeftCorner.y + height){
       result.y = (store.screenTopLeftCorner.y + height) - (this.radius * 2);
+    }
+    if (result.x < store.screenTopLeftCorner.x){
+      result.x = (store.screenTopLeftCorner.x) + (this.radius * 2);
+    }
+    if (result.y < store.screenTopLeftCorner.y){
+      result.y = (store.screenTopLeftCorner.y) + (this.radius * 2);
     }
     return result;
   }
@@ -344,6 +398,7 @@ class Craft extends Vehicle {
     super.handleCollision(dist, gameObject);
     burn.stop();
   }
+
   handleMovement() {
     super.handleMovement();
 
