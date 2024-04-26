@@ -91,7 +91,7 @@ class CoordinateStore {
   }
  
   getPointsInsideSquare({x:x1, y: y1}, {x:x2, y: y2}) {
-    const objectsLeftMoving = objectsOnScreen.filter((point) => point.isMoving());
+    const objectsLeftMoving = objectsOnScreen.filter((point) => point.isMoving() && p5.Vector.dist(craft.position, point.position) < CANVAS_SIZE * 2);
     return [...this.generateStars(), ...objectsLeftMoving,...this.coordinates.filter(point => point.isInsideSquare(x1, y1, x2, y2))];
  }
 

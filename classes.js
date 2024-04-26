@@ -174,7 +174,7 @@ class GameObject extends Entity {
       }
     }
     if (gameObject instanceof Singularity) {
-      gameObject.removeFromWorld();
+      this.removeFromWorld();
       gameObject.mass += 1;
       gameObject.size += CRAFT_SIZE / 2;
     }
