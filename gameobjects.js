@@ -102,24 +102,14 @@ class PowerUp extends SVGPaths {
   }
 
   draw(ctx) {
-    // glow up every second
-    const x = sin((TWO_PI * frameCount) / 50);
-    super.draw(
-      ctx,
-      color(170, map(x, -1, 1, 250, 125), map(x, -1, 1, 255, 100)),
-    );
+    super.draw(ctx, glow());
   }
 }
 
 class Pointer extends SVGPaths {
   handleCollision() {}
   draw(ctx) {
-    // glow up every second
-    const x = sin((TWO_PI * frameCount) / 50);
-    super.draw(
-      ctx,
-      color(170, map(x, -1, 1, 250, 125), map(x, -1, 1, 255, 100)),
-    );
+    super.draw(ctx, glow());
   }
 }
 class Target extends Pointer {
@@ -128,9 +118,6 @@ class Target extends Pointer {
       targets.shift();
       craft.lives = 6;
       craft.power = 10;
-      if (targets.length === 0) {
-        endgame = "You made it!";
-      }
     }
   }
 }

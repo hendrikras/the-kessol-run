@@ -1,4 +1,3 @@
-
 class Mine extends GoesKaboom {
   constructor(viewBox, shapes, position, speed, angle, size) {
     super(viewBox, shapes, position, speed, angle, size);
@@ -13,25 +12,38 @@ class Mine extends GoesKaboom {
 
   explode() {
     explosion.play();
-    objectsOnScreen.push(new Explosion(this.position, 0, 0, this.size, 80, true));
+    objectsOnScreen.push(
+      new Explosion(this.position, 0, 0, this.size, 80, true),
+    );
   }
 }
 
 class Rock extends GoesKaboom {
-  removeFromWorld(){
+  removeFromWorld() {
     super.removeFromWorld();
     // create smaller asteroids
     if (this.size > height / 25) {
-      const r1 = objectFactory.createRock(this.position, 5, this.angle + radians(45), this.size / 2);
-      const r2 = objectFactory.createRock(this.position, 5, this.angle + radians(270), this.size / 2);
-      objectsOnScreen.push(
-        r1, r2
+      const r1 = objectFactory.createRock(
+        this.position,
+        5,
+        this.angle + radians(45),
+        this.size / 2,
       );
+      const r2 = objectFactory.createRock(
+        this.position,
+        5,
+        this.angle + radians(270),
+        this.size / 2,
+      );
+      objectsOnScreen.push(r1, r2);
       store.add(r1);
       store.add(r2);
       return;
     }
-    const powerup = objectFactory.createPowerUp(this.position.copy(), this.speed);
+    const powerup = objectFactory.createPowerUp(
+      this.position.copy(),
+      this.speed,
+    );
     objectsOnScreen.push(powerup);
     store.add(powerup);
   }
@@ -42,45 +54,52 @@ class Vehicle extends GoesKaboom {
     super(viewBox, shapes, position, speed, angle, size);
     this.power = 10;
   }
-  getNozzlePosition(){
+  getNozzlePosition() {
     const radiusVector = p5.Vector.fromAngle(-this.angle + radians(270));
-    radiusVector.mult(this.radius + (this.height * 0.0333  )); // Scale the vector by the radius
+    radiusVector.mult(this.radius + this.height * 0.0333); // Scale the vector by the radius
     return p5.Vector.add(this.position, radiusVector);
   }
-  geExaustPosition(){
+  geExaustPosition() {
     const radiusVector = p5.Vector.fromAngle(-this.angle - radians(270));
     radiusVector.mult(this.radius);
     return p5.Vector.add(this.position, radiusVector);
   }
-  getTargetPosition(angle){
+  getTargetPosition(angle) {
     const radiusVector = p5.Vector.fromAngle(angle);
-    let distance = p5.Vector.dist(craft.position, targets[0].position);
-    if (distance < CANVAS_SIZE * 0.5){
+    const target = targets.length === 0 ? closestSingularity() : targets[0];
+    let distance = p5.Vector.dist(craft.position, target.position);
+    if (distance < CANVAS_SIZE * 0.5) {
       distance *= 0.3;
     }
     radiusVector.mult(distance);
     const result = p5.Vector.add(this.position, radiusVector);
-    if (result.x > store.screenTopLeftCorner.x + width){
-      result.x = (store.screenTopLeftCorner.x + width) - (this.radius * 2);
+    if (result.x > store.screenTopLeftCorner.x + width) {
+      result.x = store.screenTopLeftCorner.x + width - this.radius * 2;
     }
-    if (result.y > store.screenTopLeftCorner.y + height){
-      result.y = (store.screenTopLeftCorner.y + height) - (this.radius * 2);
+    if (result.y > store.screenTopLeftCorner.y + height) {
+      result.y = store.screenTopLeftCorner.y + height - this.radius * 2;
     }
-    if (result.x < store.screenTopLeftCorner.x){
-      result.x = (store.screenTopLeftCorner.x) + (this.radius * 2);
+    if (result.x < store.screenTopLeftCorner.x) {
+      result.x = store.screenTopLeftCorner.x + this.radius * 2;
     }
-    
-    if (result.y < store.screenTopLeftCorner.y){
-      result.y = (store.screenTopLeftCorner.y) + (this.radius * 2);
+
+    if (result.y < store.screenTopLeftCorner.y) {
+      result.y = store.screenTopLeftCorner.y + this.radius * 2;
     }
     return result;
   }
-  fire(){
+  fire() {
     if (this.power >= 0) {
-      
-    objectsOnScreen.push(new Bullet(this.getNozzlePosition(), BULLET_SPEED, this.angle, BULLET_SIZE));
-    this.power -= 0.3;
-    blaster.play();
+      objectsOnScreen.push(
+        new Bullet(
+          this.getNozzlePosition(),
+          BULLET_SPEED,
+          this.angle,
+          BULLET_SIZE,
+        ),
+      );
+      this.power -= 0.3;
+      blaster.play();
     }
   }
 }
@@ -100,40 +119,50 @@ class Craft extends Vehicle {
   }
 
   removeFromWorld() {
-    if(this.lives > 1) {
+    if (this.lives > 1) {
       this.lives--;
       this.tintActive = true;
       this.tintTimer = millis();
       shield.play();
-
     } else {
-      endgame = 'Game Over';
+      endgame = "Game Over";
       super.explode();
       super.removeFromWorld();
     }
-
   }
   handleMovement() {
     super.handleMovement();
 
-    const multiplierX = (store.screenTopLeftCorner.x / width) + 1;
-    const multiplierY = (store.screenTopLeftCorner.y / height) + 1;
+    const multiplierX = store.screenTopLeftCorner.x / width + 1;
+    const multiplierY = store.screenTopLeftCorner.y / height + 1;
     // move the screen
-    if (this.position.x < store.screenTopLeftCorner.x ) {
+    if (this.position.x < store.screenTopLeftCorner.x) {
       store.screenTopLeftCorner.x -= width;
-      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, { x: store.screenTopLeftCorner.x + width, y: store.screenTopLeftCorner.y + height });
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
+        x: store.screenTopLeftCorner.x + width,
+        y: store.screenTopLeftCorner.y + height,
+      });
     }
-    if (this.position.y < store.screenTopLeftCorner.y ) {
+    if (this.position.y < store.screenTopLeftCorner.y) {
       store.screenTopLeftCorner.y -= height;
-      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, { x: store.screenTopLeftCorner.x + width, y: store.screenTopLeftCorner.y + height });
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
+        x: store.screenTopLeftCorner.x + width,
+        y: store.screenTopLeftCorner.y + height,
+      });
     }
-    if (this.position.x > width * multiplierX)  {
+    if (this.position.x > width * multiplierX) {
       store.screenTopLeftCorner.x += width;
-      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, { x: store.screenTopLeftCorner.x + width, y: store.screenTopLeftCorner.y + height });
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
+        x: store.screenTopLeftCorner.x + width,
+        y: store.screenTopLeftCorner.y + height,
+      });
     }
-    if (this.position.y > height * multiplierY ) {
+    if (this.position.y > height * multiplierY) {
       store.screenTopLeftCorner.y += height;
-      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, { x: store.screenTopLeftCorner.x + width, y: store.screenTopLeftCorner.y + height });
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
+        x: store.screenTopLeftCorner.x + width,
+        y: store.screenTopLeftCorner.y + height,
+      });
     }
     // Check for cursor keys
     if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
@@ -149,7 +178,7 @@ class Craft extends Vehicle {
       this.angle -= TURN_SPEED;
     }
     if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
-      if (this.power >=0){
+      if (this.power >= 0) {
         this.emitter.addParticle(this.geExaustPosition());
         this.speed = CRAFT_SPEED;
         if (!burn.isPlaying()) {
@@ -162,7 +191,7 @@ class Craft extends Vehicle {
       burn.stop();
     }
   }
-  getParticleDirection(){
+  getParticleDirection() {
     const force = p5.Vector.fromAngle(-this.angle - radians(270));
     force.normalize();
     force.div(50);
@@ -175,7 +204,10 @@ class Craft extends Vehicle {
         this.tintActive = false;
       }
     }
-    super.draw(ctx, this.tintActive && 'red');
+    super.draw(
+      ctx,
+      this.tintActive ? "red" : targets.length === 0 && glow(true),
+    );
   }
 }
 
@@ -184,19 +216,21 @@ class EnemyCraft extends Vehicle {
     super(viewBox, shapes, position, speed, angle, size);
     this.lastFireTime = 0;
   }
-  removeFromWorld(){
-      super.removeFromWorld();
-      objectsOnScreen.push(objectFactory.createPowerUp(this.position, this.speed));
+  removeFromWorld() {
+    super.removeFromWorld();
+    objectsOnScreen.push(
+      objectFactory.createPowerUp(this.position, this.speed),
+    );
   }
   handleMovement() {
     // make the craft face the player
     const dist = p5.Vector.dist(this.position, craft.position);
-    if (!endgame && dist < CHASE_DISTANCE ){
+    if (!endgame && dist < CHASE_DISTANCE) {
       const angle = p5.Vector.sub(this.position, craft.position).heading();
       this.angle = -angle - radians(270);
       // move the craft
       this.speed = CRAFT_SPEED / 2;
-         // fire every second
+      // fire every second
       if (millis() - this.lastFireTime > FIRE_INTERVAL) {
         this.fire();
         this.lastFireTime = millis();
@@ -231,7 +265,7 @@ class Particle extends Entity {
   show() {
     const p = this.getPositionOffset();
 
-    fill(248,231, 190, this.lifespan / 4);
+    fill(248, 231, 190, this.lifespan / 4);
     noStroke();
     circle(p.x, p.y, this.size);
     circle(p.x, p.y, this.size * 0.9);
@@ -241,7 +275,7 @@ class Particle extends Entity {
 
   // Is the particle still useful?
   isDead() {
-    return (this.lifespan < 0.0);
+    return this.lifespan < 0.0;
   }
 }
 class Emitter {
@@ -265,8 +299,13 @@ class Emitter {
   }
 
   addParticle(particle = this.origin) {
-    const ratio = width  > height ? width: height;
-    const p = new Particle({x:particle.x, y:particle.y}, 0 , 0 , ratio / random(30, 50));
-    this.particles.push(p); 
+    const ratio = width > height ? width : height;
+    const p = new Particle(
+      { x: particle.x, y: particle.y },
+      0,
+      0,
+      ratio / random(30, 50),
+    );
+    this.particles.push(p);
   }
 }

@@ -150,15 +150,16 @@ class Singularity extends Entity {
     const craftRange = p5.Vector.dist(craft.position, this.position);
     if (craftRange < CANVAS_SIZE * this.range) {
       if (craftRange < this.size) {
+        if (targets.length === 0) {
+          endgame = "You made it!";
+          return;
+        }
         endgame = "Game Over";
         return;
       }
       this.applyGravity(craft);
       craft.checkCollision(this);
     }
-  }
-  handleCollision(object) {
-    object.removeFromWorld();
   }
   draw() {
     const p = this.getPositionOffset();

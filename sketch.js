@@ -51,7 +51,6 @@ class GameObjectFactory {
     this.goalShapes = this.getElements("#Goal");
     this.mineShapes = this.getElements("#mine");
     this.map = [...gamemap.DOM.lastElementChild.children]; //select("#map").elt.children;
-    console.log("map", this.map);
   }
   getElements(id) {
     const element = select(id).elt;
@@ -310,16 +309,32 @@ function draw() {
   powerBar.draw();
 
   // get the angle between the craft and the target
-  const angle = targets[0].position.copy().sub(craft.position).heading();
+
+  const direction = targets.length === 0 ? closestSingularity() : targets[0];
+  const angle = direction.position.copy().sub(craft.position).heading();
   // flip horizontally and vertically
   pointer.angle = -angle - radians(90);
   pointer.position = craft.getTargetPosition(angle);
 
   pointer.draw(ctx);
   const target = targets[0];
-  target.draw(ctx);
-  target.checkCollision(craft);
+  if (target) {
+    target.draw(ctx);
+    target.checkCollision(craft);
+  }
 }
+
+const closestSingularity = () =>
+  singularities.reduce((acc, singularity) => {
+    if (
+      acc === null ||
+      p5.Vector.dist(singularity.position, craft.position) <
+        p5.Vector.dist(acc.position, craft.position)
+    ) {
+      return singularity;
+    }
+    return acc;
+  });
 
 function keyPressed() {
   if (keyIsDown(32)) {
@@ -331,4 +346,12 @@ function keyPressed() {
     }
     craft.fire();
   }
+}
+function glow(isShip = false) {
+  const x = sin((TWO_PI * frameCount) / (isShip ? 25 : 50));
+  return color(
+    isShip ? 200 : 170,
+    map(x, -1, 1, 250, isShip ? 200 : 125),
+    map(x, -1, 1, 255, isShip ? 255 : 100),
+  );
 }
