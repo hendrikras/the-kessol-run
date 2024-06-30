@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1463px" height="760px" viewBox="0 0 1463 760" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <title>Map</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Map" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" fill="#EBE8E8" fill-rule="nonzero" x="211" y="313" width="100" height="100"></rect>
+        <polygon id="Targets" fill="#F5F2FF" fill-rule="nonzero" points="247 218 1102.48894 259.004505 275 372"></polygon>
+        <text id="S" fill-opacity="0.64718948" fill="#DC682D" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="716.580469" y="409">S</tspan>
+        </text>
+        <text id="S" fill-opacity="0.64718948" fill="#DC682D" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="1009.58047" y="529">S</tspan>
+        </text>
+        <line x1="1071.5" y1="575.5" x2="1071.5" y2="560.5" id="Line-11" stroke="#979797" fill="#000000" fill-rule="nonzero" stroke-linecap="square"></line>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="142.75" cy="241.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="32.75" cy="81.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="271.75" cy="20.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="589.75" cy="20.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="10.75" cy="272.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="250.75" cy="282.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="126.75" cy="362.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="367.75" cy="282.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="611" cy="288" r="5"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="613.75" cy="335.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="613.75" cy="335.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="682.75" cy="344.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="751.75" cy="350.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="675.75" cy="321.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="717.75" cy="358.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="637.75" cy="320.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="652.75" cy="299.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="704.75" cy="299.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="388.75" cy="362.75" r="3.75"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="605.5" cy="363.5" r="12.5"></circle>
+        <circle id="Oval" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="969.75" cy="370.75" r="3.75"></circle>
+        <circle id="Oval-2" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero" cx="232" cy="343" r="15"></circle>
+        <line x1="302.5" y1="270.5" x2="295" y2="273" id="Line" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero"></line>
+        <line x1="758.75" y1="286.75" x2="751.25" y2="289.25" id="Line" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero"></line>
+        <line x1="392.75" y1="329.75" x2="385.25" y2="332.25" id="Line" stroke="#979797" stroke-width="0.5" fill="#D8D8D8" fill-rule="nonzero"></line>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="204" cy="256.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="285" cy="344.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="597" cy="309.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="624" cy="319.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="501" cy="350.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="521" cy="414.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="478" cy="413.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="498" cy="302.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="536" cy="381" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="494" cy="437" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="498" cy="392" r="10"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="673" cy="212.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="606" cy="219.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="623" cy="243" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="655" cy="235" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="622" cy="194" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="647" cy="331.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="668" cy="309.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="644" cy="312.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="677" cy="331.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="638" cy="294.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="734" cy="351.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="697" cy="325.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="668" cy="309.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="714" cy="339.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="698" cy="359.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="725" cy="369.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="748" cy="381.5" rx="3" ry="3.5"></ellipse>
+        <text id="P" fill-opacity="0.64718948" fill="#D15323" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="296.669531" y="360">P</tspan>
+        </text>
+        <text id="S" fill-opacity="0.64718948" fill="#D75D28" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="571.580469" y="344">S</tspan>
+        </text>
+        <text id="S" fill-opacity="0.64718948" fill="#D75D28" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="966.580469" y="283">S</tspan>
+        </text>
+        <text id="P" fill-opacity="0.64718948" fill="#D15323" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="653.669531" y="325">P</tspan>
+        </text>
+        <text id="P" fill-opacity="0.64718948" fill="#D15323" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="728.669531" y="319">P</tspan>
+        </text>
+        <text id="P" fill-opacity="0.64718948" fill="#D15323" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="135.669531" y="367">P</tspan>
+        </text>
+        <text id="P" fill-opacity="0.64718948" fill="#D15323" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="7.66953125" y="290">P</tspan>
+        </text>
+        <text id="P" fill-opacity="0.64718948" fill="#D15323" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="14.6695312" y="93">P</tspan>
+        </text>
+        <text id="P" fill-opacity="0.64718948" fill="#D15323" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="257.669531" y="25">P</tspan>
+        </text>
+        <text id="P" fill-opacity="0.64718948" fill="#D15323" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="571.669531" y="24">P</tspan>
+        </text>
+        <text id="P" fill-opacity="0.64718948" fill="#D15323" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="932.669531" y="27">P</tspan>
+        </text>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="474.5" cy="278.5" r="6.5"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="458" cy="332" r="15"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="558.5" cy="266.5" r="12.5"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="770" cy="230.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="736" cy="234" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="719" cy="261" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="719" cy="212" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="860" cy="315.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="876" cy="274.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="809" cy="281.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="817" cy="247" r="20"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="825" cy="305" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="841" cy="283" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="762" cy="163.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="791" cy="156" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="778" cy="187" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="664" cy="482.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="680" cy="441.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="613" cy="448.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="646" cy="445" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="629" cy="472" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="629" cy="423" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="860" cy="438.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="876" cy="397.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="809" cy="404.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="842" cy="401" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="825" cy="428" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="825" cy="379" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="946" cy="376.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="962" cy="335.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="895" cy="342.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="977" cy="352" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="906.5" cy="377.5" r="16.5"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="930" cy="340" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="983" cy="246.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="999" cy="205.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="932" cy="212.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="965" cy="209" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="948" cy="236" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="948" cy="187" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="607" cy="524.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="540" cy="531.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="573" cy="528" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="556" cy="555" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="556" cy="506" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="474" cy="162.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="407" cy="169.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="380" cy="157" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="383" cy="194" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="448" cy="178" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="281" cy="162.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="314" cy="159" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="297" cy="186" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="297" cy="137" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="193" cy="181.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="209" cy="140.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="142" cy="147.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="175" cy="144" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="158" cy="171" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="158" cy="122" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="332" cy="583.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="348" cy="542.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="281" cy="549.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="314" cy="546" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="297" cy="573" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="297" cy="524" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="177" cy="539.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="193" cy="498.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="126" cy="505.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="159" cy="502" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="142" cy="529" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="17" cy="371" r="16"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="142" cy="480" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="378" cy="494.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="394" cy="453.5" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" cx="327" cy="460.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="360" cy="457" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="343" cy="484" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="343" cy="435" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(558.819856, 648.789464) rotate(37.000000) translate(-558.819856, -648.789464) " cx="558.819856" cy="648.789464" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(596.272440, 625.674448) rotate(37.000000) translate(-596.272440, -625.674448) " cx="596.27244" cy="625.674448" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(538.551155, 590.943290) rotate(37.000000) translate(-538.551155, -590.943290) " cx="538.551155" cy="590.94329" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(567.012480, 608.007962) rotate(37.000000) translate(-567.012480, -608.007962) " cx="567.01248" cy="608.007962" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(537.186671, 619.340265) rotate(37.000000) translate(-537.186671, -619.340265) " cx="537.186671" cy="619.340265" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(566.675607, 580.207125) rotate(37.000000) translate(-566.675607, -580.207125) " cx="566.675607" cy="580.207125" r="6"></circle>
+        <text id="S" fill-opacity="0.64718948" fill="#D75D28" font-family="Krungthep" font-size="11" font-weight="bold">
+            <tspan x="560.580469" y="127">S</tspan>
+        </text>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(550.245362, 167.998458) rotate(-9.000000) translate(-550.245362, -167.998458) " cx="550.245362" cy="167.998458" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(537.678391, 197.325429) rotate(-9.000000) translate(-537.678391, -197.325429) " cx="537.678391" cy="197.325429" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(631.767188, 93.138868) rotate(37.000000) translate(-631.767188, -93.138868) " cx="631.767188" cy="93.1388682" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(660.228512, 110.203540) rotate(37.000000) translate(-660.228512, -110.203540) " cx="660.228512" cy="110.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(630.402703, 121.535843) rotate(37.000000) translate(-630.402703, -121.535843) " cx="630.402703" cy="121.535843" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(368.035888, 116.985042) rotate(37.000000) translate(-368.035888, -116.985042) " cx="368.035888" cy="116.985042" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(405.488472, 93.870026) rotate(37.000000) translate(-405.488472, -93.870026) " cx="405.488472" cy="93.8700262" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(376.228512, 76.203540) rotate(37.000000) translate(-376.228512, -76.203540) " cx="376.228512" cy="76.2035398" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(346.402703, 87.535843) rotate(37.000000) translate(-346.402703, -87.535843) " cx="346.402703" cy="87.5358432" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(375.891639, 48.402703) rotate(37.000000) translate(-375.891639, -48.402703) " cx="375.891639" cy="48.4027032" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(444.035888, 611.985042) rotate(37.000000) translate(-444.035888, -611.985042) " cx="444.035888" cy="611.985042" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(481.488472, 588.870026) rotate(37.000000) translate(-481.488472, -588.870026) " cx="481.488472" cy="588.870026" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(423.767188, 554.138868) rotate(37.000000) translate(-423.767188, -554.138868) " cx="423.767188" cy="554.138868" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(452.228512, 571.203540) rotate(37.000000) translate(-452.228512, -571.203540) " cx="452.228512" cy="571.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(422.402703, 582.535843) rotate(37.000000) translate(-422.402703, -582.535843) " cx="422.402703" cy="582.535843" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(451.891639, 543.402703) rotate(37.000000) translate(-451.891639, -543.402703) " cx="451.891639" cy="543.402703" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(152.767188, 20.138868) rotate(37.000000) translate(-152.767188, -20.138868) " cx="152.767188" cy="20.1388682" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(206.000000, 53.000000) rotate(37.000000) translate(-206.000000, -53.000000) " cx="206" cy="53" r="15"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(151.402703, 48.535843) rotate(37.000000) translate(-151.402703, -48.535843) " cx="151.402703" cy="48.5358432" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(180.891639, 9.402703) rotate(37.000000) translate(-180.891639, -9.402703) " cx="180.891639" cy="9.40270316" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(760.035888, 549.985042) rotate(37.000000) translate(-760.035888, -549.985042) " cx="760.035888" cy="549.985042" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(797.488472, 526.870026) rotate(37.000000) translate(-797.488472, -526.870026) " cx="797.488472" cy="526.870026" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(739.767188, 492.138868) rotate(37.000000) translate(-739.767188, -492.138868) " cx="739.767188" cy="492.138868" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(768.228512, 509.203540) rotate(37.000000) translate(-768.228512, -509.203540) " cx="768.228512" cy="509.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(738.402703, 520.535843) rotate(37.000000) translate(-738.402703, -520.535843) " cx="738.402703" cy="520.535843" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(767.891639, 481.402703) rotate(37.000000) translate(-767.891639, -481.402703) " cx="767.891639" cy="481.402703" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(666.035888, 618.985042) rotate(37.000000) translate(-666.035888, -618.985042) " cx="666.035888" cy="618.985042" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(703.488472, 595.870026) rotate(37.000000) translate(-703.488472, -595.870026) " cx="703.488472" cy="595.870026" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(674.228512, 578.203540) rotate(37.000000) translate(-674.228512, -578.203540) " cx="674.228512" cy="578.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(644.402703, 589.535843) rotate(37.000000) translate(-644.402703, -589.535843) " cx="644.402703" cy="589.535843" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1110.035890, 420.985043) rotate(37.000000) translate(-1110.035890, -420.985043) " cx="1110.03589" cy="420.985043" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1147.488470, 397.870025) rotate(37.000000) translate(-1147.488470, -397.870025) " cx="1147.48847" cy="397.870025" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1089.767190, 363.138869) rotate(37.000000) translate(-1089.767190, -363.138869) " cx="1089.76719" cy="363.138869" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1118.228510, 380.203539) rotate(37.000000) translate(-1118.228510, -380.203539) " cx="1118.22851" cy="380.203539" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1088.402701, 391.535841) rotate(37.000000) translate(-1088.402701, -391.535841) " cx="1088.4027" cy="391.535841" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1213.035890, 273.985043) rotate(37.000000) translate(-1213.035890, -273.985043) " cx="1213.03589" cy="273.985043" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1192.767190, 216.138869) rotate(37.000000) translate(-1192.767190, -216.138869) " cx="1192.76719" cy="216.138869" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1248.000000, 254.000000) rotate(37.000000) translate(-1248.000000, -254.000000) " cx="1248" cy="254" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1165.000000, 237.000000) rotate(37.000000) translate(-1165.000000, -237.000000) " cx="1165" cy="237" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1253.000000, 192.000000) rotate(37.000000) translate(-1253.000000, -192.000000) " cx="1253" cy="192" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(812.035888, 637.985042) rotate(37.000000) translate(-812.035888, -637.985042) " cx="812.035888" cy="637.985042" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(849.488472, 614.870026) rotate(37.000000) translate(-849.488472, -614.870026) " cx="849.488472" cy="614.870026" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(791.767188, 580.138868) rotate(37.000000) translate(-791.767188, -580.138868) " cx="791.767188" cy="580.138868" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(809.402703, 627.535843) rotate(37.000000) translate(-809.402703, -627.535843) " cx="809.402703" cy="627.535843" r="25"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(914.035888, 560.985042) rotate(37.000000) translate(-914.035888, -560.985042) " cx="914.035888" cy="560.985042" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(951.488472, 537.870026) rotate(37.000000) translate(-951.488472, -537.870026) " cx="951.488472" cy="537.870026" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(893.767188, 503.138868) rotate(37.000000) translate(-893.767188, -503.138868) " cx="893.767188" cy="503.138868" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(922.228512, 520.203540) rotate(37.000000) translate(-922.228512, -520.203540) " cx="922.228512" cy="520.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(892.402703, 531.535843) rotate(37.000000) translate(-892.402703, -531.535843) " cx="892.402703" cy="531.535843" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(921.891639, 492.402703) rotate(37.000000) translate(-921.891639, -492.402703) " cx="921.891639" cy="492.402703" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(971.035888, 482.985042) rotate(37.000000) translate(-971.035888, -482.985042) " cx="971.035888" cy="482.985042" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1008.488470, 459.870025) rotate(37.000000) translate(-1008.488470, -459.870025) " cx="1008.48847" cy="459.870025" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(950.767188, 425.138868) rotate(37.000000) translate(-950.767188, -425.138868) " cx="950.767188" cy="425.138868" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(965.000000, 453.000000) rotate(37.000000) translate(-965.000000, -453.000000) " cx="965" cy="453" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1014.000000, 446.000000) rotate(37.000000) translate(-1014.000000, -446.000000) " cx="1014" cy="446" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(978.891639, 414.402703) rotate(37.000000) translate(-978.891639, -414.402703) " cx="978.891639" cy="414.402703" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(501.035888, 116.985042) rotate(37.000000) translate(-501.035888, -116.985042) " cx="501.035888" cy="116.985042" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(480.767188, 59.138868) rotate(37.000000) translate(-480.767188, -59.138868) " cx="480.767188" cy="59.1388682" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(506.728512, 73.703540) rotate(37.000000) translate(-506.728512, -73.703540) " cx="506.728512" cy="73.7035398" r="7.5"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(444.500000, 122.500000) rotate(37.000000) translate(-444.500000, -122.500000) " cx="444.5" cy="122.5" r="22.5"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(508.891639, 48.402703) rotate(37.000000) translate(-508.891639, -48.402703) " cx="508.891639" cy="48.4027032" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(792.488472, 90.870026) rotate(37.000000) translate(-792.488472, -90.870026) " cx="792.488472" cy="90.8700262" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(734.767188, 56.138868) rotate(37.000000) translate(-734.767188, -56.138868) " cx="734.767188" cy="56.1388682" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(725.500000, 71.500000) rotate(37.000000) translate(-725.500000, -71.500000) " cx="725.5" cy="71.5" r="5.5"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(722.000000, 132.000000) rotate(37.000000) translate(-722.000000, -132.000000) " cx="722" cy="132" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(772.000000, 70.000000) rotate(37.000000) translate(-772.000000, -70.000000) " cx="772" cy="70" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(530.013102, 148.928700) rotate(-9.000000) translate(-530.013102, -148.928700) " cx="530.013102" cy="148.9287" r="6"></circle>
+        <line x1="720" y1="435" x2="731" y2="444" id="Line-2" stroke="#979797" fill="#000000" fill-rule="nonzero" stroke-linecap="square"></line>
+        <line x1="467" y1="223" x2="473" y2="228" id="Line-4" stroke="#979797" fill="#000000" fill-rule="nonzero" stroke-linecap="square"></line>
+        <line x1="1011" y1="251" x2="1016" y2="253" id="Line-7" stroke="#979797" fill="#000000" fill-rule="nonzero" stroke-linecap="square"></line>
+        <line x1="1107" y1="150" x2="1118" y2="155" id="Line-8" stroke="#979797" fill="#000000" fill-rule="nonzero" stroke-linecap="square"></line>
+        <line x1="1098.5" y1="347.5" x2="1110.5" y2="351.5" id="Line-9" stroke="#979797" fill="#000000" fill-rule="nonzero" stroke-linecap="square"></line>
+        <line x1="1198" y1="300" x2="1210" y2="310" id="Line-10" stroke="#979797" fill="#000000" fill-rule="nonzero" stroke-linecap="square"></line>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="1130" cy="514" r="50"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="968" cy="684" r="25"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="66.5" cy="209.5" r="30.5"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="1033" cy="346" r="25"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="1016" cy="124" r="12"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="889.5" cy="110.5" r="5.5"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" cx="955" cy="131" r="7"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1266.035890, 523.985043) rotate(37.000000) translate(-1266.035890, -523.985043) " cx="1266.03589" cy="523.985043" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1303.488470, 500.870025) rotate(37.000000) translate(-1303.488470, -500.870025) " cx="1303.48847" cy="500.870025" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1245.767190, 466.138869) rotate(37.000000) translate(-1245.767190, -466.138869) " cx="1245.76719" cy="466.138869" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1274.228510, 483.203539) rotate(37.000000) translate(-1274.228510, -483.203539) " cx="1274.22851" cy="483.203539" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1244.402701, 494.535841) rotate(37.000000) translate(-1244.402701, -494.535841) " cx="1244.4027" cy="494.535841" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1273.891640, 455.402704) rotate(37.000000) translate(-1273.891640, -455.402704) " cx="1273.89164" cy="455.402704" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1292.035890, 390.985043) rotate(37.000000) translate(-1292.035890, -390.985043) " cx="1292.03589" cy="390.985043" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1231.000000, 335.500000) rotate(37.000000) translate(-1231.000000, -335.500000) " cx="1231" cy="335.5" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1334.500000, 365.500000) rotate(37.000000) translate(-1334.500000, -365.500000) " cx="1334.5" cy="365.5" r="17.5"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1238.000000, 365.000000) rotate(37.000000) translate(-1238.000000, -365.000000) " cx="1238" cy="365" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1299.891640, 322.402704) rotate(37.000000) translate(-1299.891640, -322.402704) " cx="1299.89164" cy="322.402704" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1370.488470, 212.870025) rotate(37.000000) translate(-1370.488470, -212.870025) " cx="1370.48847" cy="212.870025" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1312.767190, 178.138869) rotate(37.000000) translate(-1312.767190, -178.138869) " cx="1312.76719" cy="178.138869" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1336.000000, 245.000000) rotate(37.000000) translate(-1336.000000, -245.000000) " cx="1336" cy="245" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1295.000000, 221.000000) rotate(37.000000) translate(-1295.000000, -221.000000) " cx="1295" cy="221" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1339.000000, 198.000000) rotate(37.000000) translate(-1339.000000, -198.000000) " cx="1339" cy="198" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1260.488470, 130.870025) rotate(37.000000) translate(-1260.488470, -130.870025) " cx="1260.48847" cy="130.870025" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1202.767189, 96.138869) rotate(37.000000) translate(-1202.767189, -96.138869) " cx="1202.76719" cy="96.1388694" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1231.228510, 113.203539) rotate(37.000000) translate(-1231.228510, -113.203539) " cx="1231.22851" cy="113.203539" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1201.402701, 124.535841) rotate(37.000000) translate(-1201.402701, -124.535841) " cx="1201.4027" cy="124.535841" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1230.891640, 85.402704) rotate(37.000000) translate(-1230.891640, -85.402704) " cx="1230.89164" cy="85.4027038" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1341.035890, 112.985043) rotate(37.000000) translate(-1341.035890, -112.985043) " cx="1341.03589" cy="112.985043" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1320.767189, 55.138869) rotate(37.000000) translate(-1320.767189, -55.138869) " cx="1320.76719" cy="55.1388694" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1349.228511, 72.203539) rotate(37.000000) translate(-1349.228511, -72.203539) " cx="1349.22851" cy="72.2035386" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1319.402700, 83.535841) rotate(37.000000) translate(-1319.402700, -83.535841) " cx="1319.4027" cy="83.5358414" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1348.891640, 44.402704) rotate(37.000000) translate(-1348.891640, -44.402704) " cx="1348.89164" cy="44.4027038" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1446.035890, 230.985043) rotate(37.000000) translate(-1446.035890, -230.985043) " cx="1446.03589" cy="230.985043" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1425.767190, 173.138869) rotate(37.000000) translate(-1425.767190, -173.138869) " cx="1425.76719" cy="173.138869" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1449.228510, 185.203539) rotate(37.000000) translate(-1449.228510, -185.203539) " cx="1449.22851" cy="185.203539" r="5"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1424.402701, 201.535841) rotate(37.000000) translate(-1424.402701, -201.535841) " cx="1424.4027" cy="201.535841" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1453.891640, 162.402704) rotate(37.000000) translate(-1453.891640, -162.402704) " cx="1453.89164" cy="162.402704" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1437.488470, 341.870025) rotate(37.000000) translate(-1437.488470, -341.870025) " cx="1437.48847" cy="341.870025" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1379.767190, 307.138869) rotate(37.000000) translate(-1379.767190, -307.138869) " cx="1379.76719" cy="307.138869" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1408.228510, 324.203539) rotate(37.000000) translate(-1408.228510, -324.203539) " cx="1408.22851" cy="324.203539" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1378.402701, 335.535841) rotate(37.000000) translate(-1378.402701, -335.535841) " cx="1378.4027" cy="335.535841" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1407.891640, 296.402704) rotate(37.000000) translate(-1407.891640, -296.402704) " cx="1407.89164" cy="296.402704" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1378.767190, 449.138869) rotate(37.000000) translate(-1378.767190, -449.138869) " cx="1378.76719" cy="449.138869" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1407.228510, 466.203539) rotate(37.000000) translate(-1407.228510, -466.203539) " cx="1407.22851" cy="466.203539" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1377.402701, 477.535841) rotate(37.000000) translate(-1377.402701, -477.535841) " cx="1377.4027" cy="477.535841" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1406.891640, 438.402704) rotate(37.000000) translate(-1406.891640, -438.402704) " cx="1406.89164" cy="438.402704" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1319.767190, 571.138869) rotate(37.000000) translate(-1319.767190, -571.138869) " cx="1319.76719" cy="571.138869" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1348.228510, 588.203539) rotate(37.000000) translate(-1348.228510, -588.203539) " cx="1348.22851" cy="588.203539" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1318.402701, 599.535841) rotate(37.000000) translate(-1318.402701, -599.535841) " cx="1318.4027" cy="599.535841" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1347.891640, 560.402704) rotate(37.000000) translate(-1347.891640, -560.402704) " cx="1347.89164" cy="560.402704" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1183.767190, 643.138869) rotate(37.000000) translate(-1183.767190, -643.138869) " cx="1183.76719" cy="643.138869" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1212.228510, 660.203539) rotate(37.000000) translate(-1212.228510, -660.203539) " cx="1212.22851" cy="660.203539" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1182.402701, 671.535841) rotate(37.000000) translate(-1182.402701, -671.535841) " cx="1182.4027" cy="671.535841" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1211.891640, 632.402704) rotate(37.000000) translate(-1211.891640, -632.402704) " cx="1211.89164" cy="632.402704" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1065.035890, 695.985043) rotate(37.000000) translate(-1065.035890, -695.985043) " cx="1065.03589" cy="695.985043" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1102.488470, 672.870025) rotate(37.000000) translate(-1102.488470, -672.870025) " cx="1102.48847" cy="672.870025" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1044.767190, 638.138869) rotate(37.000000) translate(-1044.767190, -638.138869) " cx="1044.76719" cy="638.138869" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1073.228510, 655.203539) rotate(37.000000) translate(-1073.228510, -655.203539) " cx="1073.22851" cy="655.203539" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1043.402701, 666.535841) rotate(37.000000) translate(-1043.402701, -666.535841) " cx="1043.4027" cy="666.535841" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1072.891640, 627.402704) rotate(37.000000) translate(-1072.891640, -627.402704) " cx="1072.89164" cy="627.402704" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(845.767188, 715.138868) rotate(37.000000) translate(-845.767188, -715.138868) " cx="845.767188" cy="715.138868" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(874.228512, 732.203540) rotate(37.000000) translate(-874.228512, -732.203540) " cx="874.228512" cy="732.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(844.402703, 743.535843) rotate(37.000000) translate(-844.402703, -743.535843) " cx="844.402703" cy="743.535843" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(873.891639, 704.402703) rotate(37.000000) translate(-873.891639, -704.402703) " cx="873.891639" cy="704.402703" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(745.488472, 754.870026) rotate(37.000000) translate(-745.488472, -754.870026) " cx="745.488472" cy="754.870026" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(687.767188, 720.138868) rotate(37.000000) translate(-687.767188, -720.138868) " cx="687.767188" cy="720.138868" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(716.228512, 737.203540) rotate(37.000000) translate(-716.228512, -737.203540) " cx="716.228512" cy="737.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(686.402703, 748.535843) rotate(37.000000) translate(-686.402703, -748.535843) " cx="686.402703" cy="748.535843" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(715.891639, 709.402703) rotate(37.000000) translate(-715.891639, -709.402703) " cx="715.891639" cy="709.402703" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(587.488472, 744.870026) rotate(37.000000) translate(-587.488472, -744.870026) " cx="587.488472" cy="744.870026" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(529.767188, 710.138868) rotate(37.000000) translate(-529.767188, -710.138868) " cx="529.767188" cy="710.138868" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(558.228512, 727.203540) rotate(37.000000) translate(-558.228512, -727.203540) " cx="558.228512" cy="727.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(528.402703, 738.535843) rotate(37.000000) translate(-528.402703, -738.535843) " cx="528.402703" cy="738.535843" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(557.891639, 699.402703) rotate(37.000000) translate(-557.891639, -699.402703) " cx="557.891639" cy="699.402703" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(466.488472, 710.870026) rotate(37.000000) translate(-466.488472, -710.870026) " cx="466.488472" cy="710.870026" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(408.767188, 676.138868) rotate(37.000000) translate(-408.767188, -676.138868) " cx="408.767188" cy="676.138868" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(437.228512, 693.203540) rotate(37.000000) translate(-437.228512, -693.203540) " cx="437.228512" cy="693.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(407.402703, 704.535843) rotate(37.000000) translate(-407.402703, -704.535843) " cx="407.402703" cy="704.535843" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(436.891639, 665.402703) rotate(37.000000) translate(-436.891639, -665.402703) " cx="436.891639" cy="665.402703" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(272.228512, 682.203540) rotate(37.000000) translate(-272.228512, -682.203540) " cx="272.228512" cy="682.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(242.402703, 693.535843) rotate(37.000000) translate(-242.402703, -693.535843) " cx="242.402703" cy="693.535843" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(271.891639, 654.402703) rotate(37.000000) translate(-271.891639, -654.402703) " cx="271.891639" cy="654.402703" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(131.228512, 659.203540) rotate(37.000000) translate(-131.228512, -659.203540) " cx="131.228512" cy="659.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(101.402703, 670.535843) rotate(37.000000) translate(-101.402703, -670.535843) " cx="101.402703" cy="670.535843" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(130.891639, 631.402703) rotate(37.000000) translate(-130.891639, -631.402703) " cx="130.891639" cy="631.402703" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(39.228512, 590.203540) rotate(37.000000) translate(-39.228512, -590.203540) " cx="39.2285124" cy="590.20354" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(9.402703, 601.535843) rotate(37.000000) translate(-9.402703, -601.535843) " cx="9.40270316" cy="601.535843" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(38.891639, 562.402703) rotate(37.000000) translate(-38.891639, -562.402703) " cx="38.8916392" cy="562.402703" r="6"></circle>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1140.488470, 80.870025) rotate(37.000000) translate(-1140.488470, -80.870025) " cx="1140.48847" cy="80.870025" rx="3" ry="3.5"></ellipse>
+        <ellipse id="Mine" fill="#FF0000" fill-rule="nonzero" transform="translate(1082.767189, 46.138869) rotate(37.000000) translate(-1082.767189, -46.138869) " cx="1082.76719" cy="46.1388694" rx="3" ry="3.5"></ellipse>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1111.228511, 63.203539) rotate(37.000000) translate(-1111.228511, -63.203539) " cx="1111.22851" cy="63.2035386" r="10"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1081.402700, 74.535841) rotate(37.000000) translate(-1081.402700, -74.535841) " cx="1081.4027" cy="74.5358414" r="6"></circle>
+        <circle id="Oval" stroke="#979797" fill="#D8D8D8" fill-rule="nonzero" transform="translate(1110.891640, 35.402704) rotate(37.000000) translate(-1110.891640, -35.402704) " cx="1110.89164" cy="35.4027038" r="6"></circle>
+        <line x1="38.5" y1="484.5" x2="53.5" y2="500.5" id="Line-3" stroke="#979797" fill="#000000" fill-rule="nonzero" stroke-linecap="square"></line>
+        <line x1="272.5" y1="75.5" x2="280.5" y2="82.5" id="Line-5" stroke="#979797" fill="#000000" fill-rule="nonzero" stroke-linecap="square"></line>
+    </g>
+</svg>
