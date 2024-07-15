@@ -12,6 +12,7 @@ let boom,
   store,
   shield,
   singularities,
+  stars,
   targets,
   pointer;
 
@@ -65,7 +66,7 @@ class GameObjectFactory {
     return new Craft(
       viewbox,
       shapes,
-      { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 },
+      { x: innerWidth / 2, y: innerHeight / 2 },
       0,
       0,
       CRAFT_SIZE,
@@ -133,40 +134,32 @@ class CoordinateStore {
 
   getPointsInsideSquare({ x: x1, y: y1 }, { x: x2, y: y2 }) {
     const objectsLeftMoving = objectsOnScreen.filter(
-      (point) =>
-        point.isMoving() &&
-        p5.Vector.dist(craft.position, point.position) < CANVAS_SIZE * 2,
+      (point) => point instanceof Bullet || point instanceof Explosion,
     );
     return [
-      ...this.generateStars(),
+      ...stars,
       ...objectsLeftMoving,
       ...this.coordinates.filter((point) =>
         point.isInsideSquare(x1, y1, x2, y2),
       ),
     ];
   }
-
-  generateStars() {
-    const stars = [];
-    const { x, y } = this.screenTopLeftCorner;
-    randomSeed(x * 10000 + y); // Create a unique seed from x and y
-
-    // Initialize stars
-    for (let i = 0; i < STAR_COUNT; i++) {
-      stars.push(
-        new Star(
-          { x: random(width), y: random(height) },
-          0,
-          0,
-          random(STAR_SIZE, STAR_SIZE / 2),
-        ),
-      );
-    }
-
-    return stars;
-  }
 }
-
+function generateStars() {
+  const stars = [];
+  // Initialize stars
+  for (let i = 0; i < STAR_COUNT; i++) {
+    stars.push(
+      new Star(
+        { x: random(width), y: random(0, height) },
+        0,
+        0,
+        random(STAR_SIZE, STAR_SIZE / 2),
+      ),
+    );
+  }
+  return stars;
+}
 function setup() {
   textAlign(CENTER);
   createCanvas(innerWidth, innerHeight);
@@ -177,6 +170,7 @@ function setup() {
   powerBar = new PowerBar();
   singularities = [];
   objectsOnScreen = [];
+  stars = generateStars();
   let unit, offset;
 
   // Initialize world obnjects
