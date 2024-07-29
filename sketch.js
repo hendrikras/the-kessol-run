@@ -1,4 +1,5 @@
 let boom,
+  backgroundImage,
   blaster,
   burn,
   charge,
@@ -118,6 +119,7 @@ class GameObjectFactory {
 class CoordinateStore {
   constructor() {
     this.coordinates = [];
+    this.delta = createVector(0, 0);
     this.screenTopLeftCorner = createVector(0, 0);
   }
 
@@ -137,7 +139,6 @@ class CoordinateStore {
       (point) => point instanceof Bullet || point instanceof Explosion,
     );
     return [
-      ...stars,
       ...objectsLeftMoving,
       ...this.coordinates.filter((point) =>
         point.isInsideSquare(x1, y1, x2, y2),
@@ -146,23 +147,36 @@ class CoordinateStore {
   }
 }
 function generateStars() {
-  const stars = [];
-  // Initialize stars
+  backgroundImage = createImage(innerWidth, innerHeight);
+  backgroundImage.loadPixels();
   for (let i = 0; i < STAR_COUNT; i++) {
-    stars.push(
-      new Star(
-        { x: random(width), y: random(0, height) },
-        0,
-        0,
-        random(STAR_SIZE, STAR_SIZE / 2),
-      ),
-    );
+    const x = floor(random(width));
+    const y = floor(random(height));
+    const size = random(STAR_SIZE / 2, STAR_SIZE);
+    const brightness = random(100, 255);
+    const radius = size / 2;
+    for (let sx = -floor(size / 2); sx <= floor(size / 2); sx++) {
+      for (let sy = -floor(size / 2); sy <= floor(size / 2); sy++) {
+        if (x + sx >= 0 && x + sx < width && y + sy >= 0 && y + sy < height) {
+          const distance = sqrt(sx * sx + sy * sy);
+          if (distance <= radius) {
+            const index = 4 * ((y + sy) * width + (x + sx));
+            backgroundImage.pixels[index] = brightness;
+            backgroundImage.pixels[index + 1] = brightness;
+            backgroundImage.pixels[index + 2] = brightness;
+            backgroundImage.pixels[index + 3] = 255;
+          }
+        }
+      }
+    }
   }
-  return stars;
+  backgroundImage.updatePixels();
 }
 function setup() {
   textAlign(CENTER);
   createCanvas(innerWidth, innerHeight);
+  generateStars();
+
   objectFactory = new GameObjectFactory();
   store = new CoordinateStore();
 
@@ -170,10 +184,9 @@ function setup() {
   powerBar = new PowerBar();
   singularities = [];
   objectsOnScreen = [];
-  stars = generateStars();
   let unit, offset;
 
-  // Initialize world obnjects
+  // Initialize world objects
   objectFactory.map.forEach((el) => {
     switch (el.tagName) {
       case "rect": // start screen position
@@ -272,6 +285,26 @@ function setup() {
 
 function draw() {
   background("#162F4B");
+  // Calculate the background offset based on the global delta
+  let bgOffsetX = store.screenTopLeftCorner.x % backgroundImage.width;
+  let bgOffsetY = store.screenTopLeftCorner.y % backgroundImage.height;
+
+  // Ensure positive offsets using bitwise OR for faster integer conversion
+  bgOffsetX =
+    (bgOffsetX | 0) < 0 ? bgOffsetX + backgroundImage.width : bgOffsetX;
+  bgOffsetY =
+    (bgOffsetY | 0) < 0 ? bgOffsetY + backgroundImage.height : bgOffsetY;
+
+  // Precalculate the loop bounds
+  const maxX = width + backgroundImage.width;
+  const maxY = height + backgroundImage.height;
+
+  // Draw the background image, tiling it to cover the canvas
+  for (let x = -bgOffsetX; x < maxX; x += backgroundImage.width) {
+    for (let y = -bgOffsetY; y < maxY; y += backgroundImage.height) {
+      image(backgroundImage, x, y);
+    }
+  }
   noStroke();
   textSize(30);
 

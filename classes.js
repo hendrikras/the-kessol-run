@@ -137,10 +137,10 @@ class Craft extends Vehicle {
     const multiplierY = store.screenTopLeftCorner.y / height + 1;
     const threshold = 0.5; // 80% of the screen
     // Calculate the screen movement
-    const screenDeltaX =
-      this.position.x - width * threshold - store.screenTopLeftCorner.x;
-    const screenDeltaY =
-      this.position.y - height * threshold - store.screenTopLeftCorner.y;
+    store.delta = {
+      x: this.position.x - width * threshold - store.screenTopLeftCorner.x,
+      y: this.position.y - height * threshold - store.screenTopLeftCorner.y,
+    };
     // move the screen
     store.screenTopLeftCorner.x = this.position.x - width * threshold;
     store.screenTopLeftCorner.y = this.position.y - height * threshold;
@@ -148,18 +148,6 @@ class Craft extends Vehicle {
     objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
       x: store.screenTopLeftCorner.x + width,
       y: store.screenTopLeftCorner.y + height,
-    });
-    // move the stars
-    stars.forEach((star) => {
-      // Calculate star movement (inverse of screen movement)
-      star.position.x -= screenDeltaX;
-      star.position.y -= screenDeltaY;
-
-      // Wrap stars around the screen
-      if (star.position.x < 0) star.position.x = width;
-      if (star.position.y < 0) star.position.y = height;
-      if (star.position.x > width) star.position.x = 0;
-      if (star.position.y > height) star.position.y = 0;
     });
 
     if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
