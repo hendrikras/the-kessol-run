@@ -52,7 +52,7 @@ class GameObjectFactory {
     this.pointerShapes = this.getElements("#Target");
     this.goalShapes = this.getElements("#Goal");
     this.mineShapes = this.getElements("#mine");
-    this.map = [...gamemap.DOM.lastElementChild.children]; //select("#map").elt.children;
+    this.elements = [...gamemap.DOM.lastElementChild.children]; //select("#map").elt.children;
   }
   getElements(id) {
     const element = select(id).elt;
@@ -84,6 +84,36 @@ class GameObjectFactory {
       angle,
       CRAFT_SIZE / 1.6,
     );
+  }
+  createBackgroundElement(unit, off, SVGElement, deltaWidth) {
+    const [rect, ...element] = [...SVGElement.children].reduce((acc, el) => {
+      el.id === "Rectangle" ? acc.unshift(el) : acc.push(el);
+      return acc;
+    }, []);
+    const shapes = getPathsAndColors(element);
+    const w = rect.getAttribute("width") * (deltaWidth / 100);
+    const runit = CANVAS_SIZE / w;
+    shapes.forEach((shape) => {
+      if (!shape.fill) {
+        shape.fill = shape.getAttribute("fill") || "#ffffff";
+      }
+    });
+    // create a viewBox
+    const viewbox = `0 0 ${w} ${w}`;
+    //get the position of the transform attribute
+    const transform = SVGElement.getAttribute("transform");
+    const [x, y] = transform
+      .match(/translate\(([^,]+),([^,]+)\)/)
+      ?.slice(1)
+      .map(Number);
+    const r = w / 2;
+    // convert the SVG coordinates to game world coordinates.
+    const place = createVector((x + r) * unit, (y + r) * unit).sub(off);
+    const object = new SVGPaths(viewbox, shapes, place, 0, 0, r * unit);
+    object.collides = false;
+    object.checkCollision = () => false;
+    object.handleMovement = () => null;
+    return object;
   }
 
   createRock(position, speed = 0, angle = radians(200), size = ROCK_SIZE) {
@@ -139,10 +169,10 @@ class CoordinateStore {
       (point) => point instanceof Bullet || point instanceof Explosion,
     );
     return [
-      ...objectsLeftMoving,
-      ...this.coordinates.filter((point) =>
-        point.isInsideSquare(x1, y1, x2, y2),
+      ...this.coordinates.filter(
+        (point) => point.isInsideSquare(x1, y1, x2, y2) || point.isMoving(),
       ),
+      ...objectsLeftMoving,
     ];
   }
 }
@@ -186,11 +216,11 @@ function setup() {
   objectsOnScreen = [];
   let unit, offset;
 
+  const w = objectFactory.elements[0].getAttribute("width");
   // Initialize world objects
-  objectFactory.map.forEach((el) => {
+  objectFactory.elements.forEach((el) => {
     switch (el.tagName) {
       case "rect": // start screen position
-        const w = el.getAttribute("width");
         const x = el.getAttribute("x");
         const y = el.getAttribute("y");
 
@@ -246,7 +276,15 @@ function setup() {
           }
           return acc;
         }, []);
-        // target = objectFactory.createGoal(createVector(points[0] * unit, points[1] * unit).sub(offset));
+        break;
+      case "g": // group
+        const backgroundElement = objectFactory.createBackgroundElement(
+          unit,
+          offset,
+          el,
+          w,
+        );
+        store.add(backgroundElement);
         break;
       default:
         // text elements

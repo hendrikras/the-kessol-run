@@ -5,6 +5,10 @@
     <desc>Created with Sketch.</desc>
     <g id="Map" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <rect id="Rectangle" fill="#EBE8E8" fill-rule="nonzero" x="212" y="318" width="100" height="100"></rect>
+        <g id="Mickey" transform="translate(208.000000, 316.000000)">
+            <rect id="Rectangle" fill="#E9E9E8" x="0" y="0" width="49" height="49"></rect>
+            <path d="M38,0 C44.0751322,0 49,5.372583 49,12 C49,17.9178801 45.0732043,22.8352305 39.9070414,23.820311 C41.2408937,26.2471188 42,29.03491 42,32 C42,41.3888407 34.3888407,49 25,49 C15.6111593,49 8,41.3888407 8,32 C8,29.0886379 8.73184534,26.3482074 10.0216037,23.952641 C4.40459145,23.4128883 0,18.2675791 0,12 C0,5.372583 4.92486775,0 11,0 C17.0751322,0 22,5.372583 22,12 C22,13.1619828 21.8486071,14.2853915 21.5661655,15.3480323 C22.6748849,15.1195148 23.8234854,15 25,15 C25.8104205,15 26.607596,15.0567084 27.3877749,15.1663737 C27.1347498,14.1581736 27,13.0962536 27,12 C27,5.372583 31.9248678,0 38,0 Z" id="Combined-Shape" fill="#EC0000"></path>
+        </g>
         <polygon id="Targets" fill="#F5F2FF" fill-rule="nonzero" points="273 336.25 1101.72401 263 639 221"></polygon>
         <text id="S" fill-opacity="0.64718948" fill="#DC682D" font-family="Krungthep" font-size="11" font-weight="bold">
             <tspan x="717.580469" y="414">S</tspan>

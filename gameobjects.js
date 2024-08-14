@@ -28,6 +28,7 @@ class Bullet extends GameObject {
   }
 }
 class SVGPaths extends GameObject {
+  // class SVGPaths extends GameObject {
   constructor(viewBox, shapes, position, speed, angle, size) {
     super(position, speed, angle, size);
     this.shapes = shapes;
