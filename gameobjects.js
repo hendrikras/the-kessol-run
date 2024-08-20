@@ -27,9 +27,24 @@ class Bullet extends GameObject {
     ellipse(p.x, p.y, this.radius * 2);
   }
 }
-class SVGPaths extends GameObject {
-  // class SVGPaths extends GameObject {
-  constructor(viewBox, shapes, position, speed, angle, size) {
+
+class GoesKaboom extends GameObject {
+  getRadiusPosition(angle, radius) {
+    const radiusVector = p5.Vector.fromAngle(angle);
+    radiusVector.mult(radius);
+    return p5.Vector.add(this.position, radiusVector);
+  }
+  removeFromWorld() {
+    this.explode();
+    super.removeFromWorld();
+  }
+  explode() {
+    explosion.play();
+    objectsOnScreen.push(new Explosion(this.position, 0, 0, this.size, 10));
+  }
+}
+class SVGPaths extends GoesKaboom {
+  constructor(position, speed, angle, size, viewBox, shapes) {
     super(position, speed, angle, size);
     this.shapes = shapes;
     this.viewBox = viewBox;
@@ -86,9 +101,79 @@ class SVGPaths extends GameObject {
   }
 }
 
+class Turret extends GoesKaboom {
+  constructor(position, size) {
+    super(position, 0, 0, size); // Speed is 0 since it doesn't move
+    this.radius = size / 2;
+    this.barrelLength = size * 0.8;
+    this.barrelWidth = size * 0.2;
+    this.fireRange = CANVAS_SIZE * 0.6; // 30% of canvas size
+    this.fireRate = 2; // Fires every 2 seconds
+    this.lastFireTime = 20;
+    this.collides = true;
+  }
+
+  handleCollision(dist, gameObject) {
+    this.removeFromWorld();
+  }
+
+  handleMovement() {
+    // Update angle to face the player
+    const angle = p5.Vector.sub(this.position, craft.position).heading();
+    this.angle = -angle - radians(270);
+
+    // Check if player is in range and fire if conditions are met
+    let distanceToPlayer = p5.Vector.dist(this.position, craft.position);
+    if (distanceToPlayer <= this.fireRange) {
+      this.fire();
+    }
+  }
+
+  fire() {
+    let currentTime = millis();
+    if (currentTime - this.lastFireTime > FIRE_INTERVAL) {
+      let bulletSpeed = 5;
+      let bulletSize = this.size / 4;
+      let bulletPosition = this.position
+        .copy()
+        .add(p5.Vector.fromAngle(this.angle).mult(this.barrelLength) * 3);
+
+      const bullet = new Bullet(
+        this.getRadiusPosition(
+          -this.angle + radians(270),
+          this.radius + BULLET_SIZE,
+        ),
+        BULLET_SPEED,
+        this.angle,
+        BULLET_SIZE,
+      );
+      objectsOnScreen.push(bullet);
+
+      this.lastFireTime = currentTime;
+    }
+  }
+
+  draw() {
+    const p = this.getPositionOffset();
+
+    // Draw base
+    fill(100);
+    noStroke();
+    circle(p.x, p.y, this.radius * 2);
+
+    // Draw barrel
+    push();
+    translate(p.x, p.y);
+    rotate(-this.angle + radians(270));
+    fill(80);
+    rectMode(CENTER);
+    rect(this.barrelLength / 2, 0, this.barrelLength, this.barrelWidth);
+    pop();
+  }
+}
 class PowerUp extends SVGPaths {
-  constructor(viewBox, shapes, position, speed, angle, size) {
-    super(viewBox, shapes, position, speed, angle, size);
+  constructor(position, speed, angle, size, viewBox, shapes) {
+    super(position, speed, angle, size, viewBox, shapes);
     this.collides = false;
   }
   removeFromWorld() {
@@ -120,16 +205,5 @@ class Target extends Pointer {
       craft.lives = 6;
       craft.power = 10;
     }
-  }
-}
-
-class GoesKaboom extends SVGPaths {
-  removeFromWorld() {
-    this.explode();
-    super.removeFromWorld();
-  }
-  explode() {
-    explosion.play();
-    objectsOnScreen.push(new Explosion(this.position, 0, 0, this.size, 10));
   }
 }

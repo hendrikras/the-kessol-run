@@ -1,6 +1,6 @@
-class Mine extends GoesKaboom {
-  constructor(viewBox, shapes, position, speed, angle, size) {
-    super(viewBox, shapes, position, speed, angle, size);
+class Mine extends SVGPaths {
+  constructor(position, speed, angle, size, viewBox, shapes) {
+    super(position, speed, angle, size, viewBox, shapes);
     // this.mass = 2;
   }
 
@@ -18,7 +18,7 @@ class Mine extends GoesKaboom {
   }
 }
 
-class Rock extends GoesKaboom {
+class Rock extends SVGPaths {
   removeFromWorld() {
     super.removeFromWorld();
     // create smaller asteroids
@@ -49,20 +49,10 @@ class Rock extends GoesKaboom {
   }
 }
 
-class Vehicle extends GoesKaboom {
-  constructor(viewBox, shapes, position, speed, angle, size) {
-    super(viewBox, shapes, position, speed, angle, size);
+class Vehicle extends SVGPaths {
+  constructor(position, speed, angle, size, viewBox, shapes) {
+    super(position, speed, angle, size, viewBox, shapes);
     this.power = 10;
-  }
-  getNozzlePosition() {
-    const radiusVector = p5.Vector.fromAngle(-this.angle + radians(270));
-    radiusVector.mult(this.radius + this.height * 0.0333); // Scale the vector by the radius
-    return p5.Vector.add(this.position, radiusVector);
-  }
-  getRadiusPosition(angle, radius) {
-    const radiusVector = p5.Vector.fromAngle(angle - radians(270));
-    radiusVector.mult(radius);
-    return p5.Vector.add(this.position, radiusVector);
   }
   getTargetPosition(angle) {
     const radiusVector = p5.Vector.fromAngle(angle);
@@ -92,7 +82,10 @@ class Vehicle extends GoesKaboom {
     if (this.power >= 0) {
       objectsOnScreen.push(
         new Bullet(
-          this.getNozzlePosition(),
+          this.getRadiusPosition(
+            -this.angle + radians(270),
+            this.radius + BULLET_SIZE,
+          ),
           BULLET_SPEED,
           this.angle,
           BULLET_SIZE,
@@ -104,10 +97,8 @@ class Vehicle extends GoesKaboom {
   }
 }
 class Craft extends Vehicle {
-  constructor(viewBox, shapes, position, speed, angle, size) {
-    super(viewBox, shapes, position, speed, angle, size);
-    this.nozzle = this.position.copy();
-    this.exaust = this.getNozzlePosition();
+  constructor(position, speed, angle, size, viewBox, shapes) {
+    super(position, speed, angle, size, viewBox, shapes);
     this.lives = 6;
     this.tintActive = false;
     this.tintTimer = 500;
@@ -165,7 +156,7 @@ class Craft extends Vehicle {
     if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
       if (this.power >= 0) {
         this.emitter.addParticle(
-          this.getRadiusPosition(-this.angle, this.radius),
+          this.getRadiusPosition(-this.angle - radians(270), this.radius),
         );
         this.speed = CRAFT_SPEED;
         if (!burn.isPlaying()) {
@@ -199,8 +190,8 @@ class Craft extends Vehicle {
 }
 
 class EnemyCraft extends Vehicle {
-  constructor(viewBox, shapes, position, speed, angle, size) {
-    super(viewBox, shapes, position, speed, angle, size);
+  constructor(position, speed, angle, size, viewBox, shapes) {
+    super(position, speed, angle, size, viewBox, shapes);
     this.lastFireTime = 0;
   }
   removeFromWorld() {

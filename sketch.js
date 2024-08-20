@@ -65,24 +65,24 @@ class GameObjectFactory {
   createCraft() {
     const [shapes, viewbox] = this.craftShapes;
     return new Craft(
-      viewbox,
-      shapes,
       { x: innerWidth / 2, y: innerHeight / 2 },
       0,
       0,
       CRAFT_SIZE,
+      viewbox,
+      shapes,
     );
   }
 
   createEnemyCraft(position, angle) {
     const [shapes, viewbox] = this.enemyShapes;
     return new EnemyCraft(
-      viewbox,
-      shapes,
       position,
       0,
       angle,
       CRAFT_SIZE / 1.6,
+      viewbox,
+      shapes,
     );
   }
   createBackgroundElement(unit, off, SVGElement, deltaWidth) {
@@ -109,7 +109,7 @@ class GameObjectFactory {
     const r = w / 2;
     // convert the SVG coordinates to game world coordinates.
     const place = createVector((x + r) * unit, (y + r) * unit).sub(off);
-    const object = new SVGPaths(viewbox, shapes, place, 0, 0, r * unit);
+    const object = new SVGPaths(place, 0, 0, r * unit, viewbox, shapes);
     object.collides = false;
     object.checkCollision = () => false;
     object.handleMovement = () => null;
@@ -118,31 +118,34 @@ class GameObjectFactory {
 
   createRock(position, speed = 0, angle = radians(200), size = ROCK_SIZE) {
     const [shapes, viewbox] = this.asteroidShapes;
-    return new Rock(viewbox, shapes, position, speed, angle, size);
+    return new Rock(position, speed, angle, size, viewbox, shapes);
   }
 
   createMine(position) {
     const [shapes, viewbox] = this.mineShapes;
-    return new Mine(viewbox, shapes, position, 0, 0, CRAFT_SIZE);
+    return new Mine(position, 0, 0, CRAFT_SIZE, viewbox, shapes);
   }
 
   createPowerUp(position, speed) {
     const [shapes, viewbox] = this.powerUpShapes;
-    return new PowerUp(viewbox, shapes, position, speed, 0, CRAFT_SIZE / 2);
+    return new PowerUp(position, speed, 0, CRAFT_SIZE / 2, viewbox, shapes);
   }
 
   createPointer(position, speed) {
     const [shapes, viewbox] = this.pointerShapes;
-    return new Pointer(viewbox, shapes, position, speed, 0, CRAFT_SIZE / 1.8);
+    return new Pointer(position, speed, 0, CRAFT_SIZE / 1.8, viewbox, shapes);
   }
 
   createGoal(position) {
     const [shapes, viewbox] = this.goalShapes;
-    return new Target(viewbox, shapes, position, 0, 0, CRAFT_SIZE / 2);
+    return new Target(position, 0, 0, CRAFT_SIZE / 2, viewbox, shapes);
   }
 
   createSingularity(position) {
     return new Singularity(position, 0, 0, CRAFT_SIZE / 2);
+  }
+  createTurret(position) {
+    return new Turret(position, CRAFT_SIZE / 2);
   }
 }
 
@@ -292,6 +295,17 @@ function setup() {
         if (text.innerHTML === "S") {
           singularities.push(
             objectFactory.createSingularity(
+              createVector(
+                text.getAttribute("x") * unit,
+                text.getAttribute("y") * unit,
+              ).sub(offset),
+            ),
+          );
+          break;
+        }
+        if (text.innerHTML === "T") {
+          store.add(
+            objectFactory.createTurret(
               createVector(
                 text.getAttribute("x") * unit,
                 text.getAttribute("y") * unit,
