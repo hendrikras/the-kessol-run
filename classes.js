@@ -238,17 +238,29 @@ class Particle extends Entity {
     this.lifespan -= 2;
     this.acceleration.mult(0); // clear Acceleration
   }
-
-  // Method to draw
   show() {
     const p = this.getPositionOffset();
 
-    fill(248, 231, 190, this.lifespan / 4);
-    noStroke();
-    circle(p.x, p.y, this.size);
-    circle(p.x, p.y, this.size * 0.9);
-    circle(p.x, p.y, this.size * 0.8);
-    circle(p.x, p.y, this.size * 0.7);
+    // Create a radial gradient
+    const gradient = drawingContext.createRadialGradient(
+      p.x,
+      p.y,
+      0,
+      p.x,
+      p.y,
+      this.size / 2,
+    );
+    gradient.addColorStop(0, `rgba(248, 231, 190, ${this.lifespan / 200})`);
+    gradient.addColorStop(0.6, `rgba(248, 231, 190, ${this.lifespan / 255})`);
+    gradient.addColorStop(1, "rgba(248, 231, 190, 0)");
+
+    // Apply the gradient
+    drawingContext.fillStyle = gradient;
+
+    // Draw a single circle
+    drawingContext.beginPath();
+    drawingContext.arc(p.x, p.y, this.size / 2, 0, Math.PI * 2);
+    drawingContext.fill();
   }
 
   // Is the particle still useful?
