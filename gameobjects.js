@@ -1,6 +1,75 @@
-class Bullet extends GameObject {
-  constructor(position, speed, angle, size) {
-    super(position, speed, angle, size);
+import p5 from "https://esm.sh/p5@1.10.0";
+import { CRAFT_SIZE, TOP_SPEED } from "./constants.js";
+import { Entity, Explosion, Singularity } from "./entities.js";
+import { glow } from "./helpers.js";
+import { Craft } from "./classes.js";
+
+export class GameObject extends Entity {
+  constructor(p5, store, position, speed, angle, size) {
+    super(p5, store, position, speed, angle, size);
+    this.collides = true;
+    this.spawnsPowerUp = false;
+    this.explodes = false;
+  }
+
+  isCollision(gameObject) {
+    const dist = p5.Vector.sub(gameObject.position, this.position);
+    if (dist.mag() <= gameObject.radius + this.radius) {
+      return dist;
+    }
+    return null;
+  }
+
+  checkCollision(gameObject) {
+    const dist = this.isCollision(gameObject);
+    if (dist) {
+      this.handleCollision(dist, gameObject);
+    }
+  }
+
+  handleCollision(dist, gameObject) {
+    if (gameObject instanceof Craft) {
+      if (!this.store.endgame && gameObject?.lives === 0) {
+        this.store.endgame = "Game Over";
+      }
+      if (gameObject.lives) {
+        gameObject.lives -= 1;
+      }
+    }
+    if (gameObject instanceof Singularity) {
+      this.removeFromWorld();
+      gameObject.mass += 1;
+      gameObject.size += CRAFT_SIZE / 2;
+    }
+  }
+
+  handleMovement(friction = true) {
+    let directionVector = p5.Vector.fromAngle(
+      -this.angle + this.p5.radians(270),
+    );
+    directionVector.setMag(this.speed);
+    this.acceleration.add(directionVector);
+
+    this.velocity.add(this.acceleration);
+    friction && this.velocity.limit(TOP_SPEED);
+    this.position.add(this.velocity);
+
+    // Deceleration.
+    if (friction) {
+      if (this.velocity.mag() > 0.02) {
+        this.velocity.mult(0.99);
+      } else {
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+      }
+      this.acceleration.mult(0);
+    }
+  }
+}
+
+export class Bullet extends GameObject {
+  constructor(_, store, position, speed, angle, size) {
+    super(_, store, position, speed, angle, size);
   }
   handleMovement() {
     super.handleMovement(false);
@@ -16,36 +85,34 @@ class Bullet extends GameObject {
     super.handleCollision(dist, gameObject);
     this.removeFromWorld();
 
-    if (!endgame) {
+    if (!this.store.endgame) {
       // only if the object is not the craft or the enemy craft
       gameObject.removeFromWorld();
     }
   }
-  draw() {
-    fill("red");
-    const p = this.getPositionOffset();
-    ellipse(p.x, p.y, this.radius * 2);
+  draw(offset, ctx) {
+    ctx.fillStyle = "red";
+    const p = this.getPositionOffset(offset);
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y, this.radius, this.radius, 0, 0, 2 * Math.PI);
+    ctx.fill();
   }
 }
 
 class GoesKaboom extends GameObject {
+  constructor(p5, store, position, speed, angle, size) {
+    super(p5, store, position, speed, angle, size);
+    this.explodes = true;
+  }
   getRadiusPosition(angle, radius) {
     const radiusVector = p5.Vector.fromAngle(angle);
     radiusVector.mult(radius);
     return p5.Vector.add(this.position, radiusVector);
   }
-  removeFromWorld() {
-    this.explode();
-    super.removeFromWorld();
-  }
-  explode() {
-    explosion.play();
-    objectsOnScreen.push(new Explosion(this.position, 0, 0, this.size, 10));
-  }
 }
-class SVGPaths extends GoesKaboom {
-  constructor(position, speed, angle, size, viewBox, shapes) {
-    super(position, speed, angle, size);
+export class SVGPaths extends GoesKaboom {
+  constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
+    super(p5, store, position, speed, angle, size);
     this.shapes = shapes;
     this.viewBox = viewBox;
     const [minX, minY, h, w] = viewBox.split(" ");
@@ -65,19 +132,19 @@ class SVGPaths extends GoesKaboom {
     this.velocity.mult(0.9);
     gameObject.velocity.mult(0.75);
     this.acceleration.add(_dist.mult(0.5 * vStore));
-    burn.stop();
-    boom.play();
+    this.store.audio.stop("burn");
+    this.store.audio.play("boom");
   }
 
-  draw(ctx, colorOverride) {
-    super.draw(ctx);
+  draw(offset, ctx, colorOverride) {
+    super.draw(offset, ctx);
     const cos = Math.cos(this.angle);
     const sin = Math.sin(this.angle);
 
-    const v = createVector(this.width / 2, this.height / 2);
+    const v = this.p5.createVector(this.width / 2, this.height / 2);
     const pos = v.copy().rotate(this.angle).sub(v);
-    const offset = createVector(this.radius, this.radius);
-    const p = this.getPositionOffset().sub(offset);
+    const o = this.p5.createVector(this.radius, this.radius);
+    const p = this.getPositionOffset(offset).sub(o);
 
     ctx.setTransform(
       this.scaleX * cos,
@@ -92,8 +159,7 @@ class SVGPaths extends GoesKaboom {
     this.shapes.forEach((shape) => {
       const path = new Path2D(shape.path);
       const color = shape.fill;
-      colorOverride ? fill(colorOverride) : fill(color);
-
+      ctx.fillStyle = colorOverride || color;
       ctx.fill(path);
     });
 
@@ -102,8 +168,8 @@ class SVGPaths extends GoesKaboom {
 }
 
 class Turret extends GoesKaboom {
-  constructor(position, size) {
-    super(position, 0, 0, size); // Speed is 0 since it doesn't move
+  constructor(p5, store, position, size) {
+    super(p5, store, position, 0, 0, size); // Speed is 0 since it doesn't move
     this.radius = size / 2;
     this.barrelLength = size * 0.8;
     this.barrelWidth = size * 0.2;
@@ -120,7 +186,7 @@ class Turret extends GoesKaboom {
   handleMovement() {
     // Update angle to face the player
     const angle = p5.Vector.sub(this.position, craft.position).heading();
-    this.angle = -angle - radians(270);
+    this.angle = -angle - this.p5.radians(270);
 
     // Check if player is in range and fire if conditions are met
     let distanceToPlayer = p5.Vector.dist(this.position, craft.position);
@@ -140,7 +206,7 @@ class Turret extends GoesKaboom {
 
       const bullet = new Bullet(
         this.getRadiusPosition(
-          -this.angle + radians(270),
+          -this.angle + this.p5.radians(270),
           this.radius + BULLET_SIZE,
         ),
         BULLET_SPEED,
@@ -153,57 +219,56 @@ class Turret extends GoesKaboom {
     }
   }
 
-  draw() {
-    const p = this.getPositionOffset();
+  draw(offset) {
+    const p = this.getPositionOffset(offset);
 
     // Draw base
-    fill(100);
-    noStroke();
-    circle(p.x, p.y, this.radius * 2);
+    this.p5.fill(100);
+    this.p5.noStroke();
+    this.p5.circle(p.x, p.y, this.radius * 2);
 
     // Draw barrel
-    push();
-    translate(p.x, p.y);
-    rotate(-this.angle + radians(270));
-    fill(80);
-    rectMode(CENTER);
-    rect(this.barrelLength / 2, 0, this.barrelLength, this.barrelWidth);
-    pop();
+    this.p5.push();
+    this.p5.translate(p.x, p.y);
+    this.p5.rotate(-this.angle + this.p5.radians(270));
+    this.p5.fill(80);
+    this.p5.rectMode(CENTER);
+    this.p5.rect(this.barrelLength / 2, 0, this.barrelLength, this.barrelWidth);
+    this.p5.pop();
   }
 }
-class PowerUp extends SVGPaths {
-  constructor(position, speed, angle, size, viewBox, shapes) {
-    super(position, speed, angle, size, viewBox, shapes);
+export class PowerUp extends SVGPaths {
+  constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
+    super(p5, store, position, speed, angle, size, viewBox, shapes);
     this.collides = false;
+    this.explodes = false;
   }
   removeFromWorld() {
-    charge.play();
-    super.removeFromWorld();
+    this.store.audio.play("energy");
+    super.removeFromWorld(false);
   }
   handleCollision(_, gameObject) {
     if (gameObject instanceof Craft) {
-      craft.power += 1;
+      this.store.craft.power += 1;
       this.removeFromWorld();
     }
   }
 
-  draw(ctx) {
-    super.draw(ctx, glow());
+  draw(offset, ctx) {
+    super.draw(offset, ctx, glow(this.p5));
   }
 }
 
-class Pointer extends SVGPaths {
+export class Pointer extends SVGPaths {
   handleCollision() {}
-  draw(ctx) {
-    super.draw(ctx, glow());
+  draw(offset, ctx) {
+    super.draw(offset, ctx, glow(this.p5));
   }
 }
-class Target extends Pointer {
+export class Target extends Pointer {
   handleCollision(_, gameObject) {
     if (gameObject instanceof Craft) {
-      targets.shift();
-      craft.lives = 6;
-      craft.power = 10;
+      gameObject.targetsReached(this);
     }
   }
 }

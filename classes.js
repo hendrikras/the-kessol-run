@@ -1,6 +1,20 @@
-class Mine extends SVGPaths {
-  constructor(position, speed, angle, size, viewBox, shapes) {
-    super(position, speed, angle, size, viewBox, shapes);
+import p5 from "https://esm.sh/p5@1.10.0";
+import {
+  BULLET_SIZE,
+  BULLET_SPEED,
+  CANVAS_SIZE,
+  CRAFT_SPEED,
+  CHASE_DISTANCE,
+  TURN_SPEED,
+  FIRE_INTERVAL,
+} from "./constants.js";
+import { Bullet, SVGPaths } from "./gameobjects.js";
+import { Entity } from "./entities.js";
+import { glow, radians } from "./helpers.js";
+
+export class Mine extends SVGPaths {
+  constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
+    super(p5, store, position, speed, angle, size, viewBox, shapes);
     // this.mass = 2;
   }
 
@@ -9,79 +23,27 @@ class Mine extends SVGPaths {
     gameObject.removeFromWorld();
     super.handleCollision(dist, gameObject);
   }
-
-  explode() {
-    explosion.play();
-    objectsOnScreen.push(
-      new Explosion(this.position, 0, 0, this.size, 80, true),
-    );
-  }
 }
 
-class Rock extends SVGPaths {
+export class Rock extends SVGPaths {
   removeFromWorld() {
+    this.spawnsPowerUp = this.size < this.p5.height / 25;
     super.removeFromWorld();
-    // create smaller asteroids
-    if (this.size > height / 25) {
-      const r1 = objectFactory.createRock(
-        this.position,
-        5,
-        this.angle + radians(45),
-        this.size / 2,
-      );
-      const r2 = objectFactory.createRock(
-        this.position,
-        5,
-        this.angle + radians(270),
-        this.size / 2,
-      );
-      objectsOnScreen.push(r1, r2);
-      store.add(r1);
-      store.add(r2);
-      return;
-    }
-    const powerup = objectFactory.createPowerUp(
-      this.position.copy(),
-      this.speed,
-    );
-    objectsOnScreen.push(powerup);
-    store.add(powerup);
   }
 }
 
 class Vehicle extends SVGPaths {
-  constructor(position, speed, angle, size, viewBox, shapes) {
-    super(position, speed, angle, size, viewBox, shapes);
+  constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
+    super(p5, store, position, speed, angle, size, viewBox, shapes);
     this.power = 10;
   }
-  getTargetPosition(angle) {
-    const radiusVector = p5.Vector.fromAngle(angle);
-    const target = targets.length === 0 ? closestSingularity() : targets[0];
-    let distance = p5.Vector.dist(craft.position, target.position);
-    if (distance < CANVAS_SIZE * 0.5) {
-      distance *= 0.3;
-    }
-    radiusVector.mult(distance);
-    const result = p5.Vector.add(this.position, radiusVector);
-    if (result.x > store.screenTopLeftCorner.x + width) {
-      result.x = store.screenTopLeftCorner.x + width - this.radius * 2;
-    }
-    if (result.y > store.screenTopLeftCorner.y + height) {
-      result.y = store.screenTopLeftCorner.y + height - this.radius * 2;
-    }
-    if (result.x < store.screenTopLeftCorner.x) {
-      result.x = store.screenTopLeftCorner.x + this.radius * 2;
-    }
 
-    if (result.y < store.screenTopLeftCorner.y) {
-      result.y = store.screenTopLeftCorner.y + this.radius * 2;
-    }
-    return result;
-  }
   fire() {
     if (this.power >= 0) {
-      objectsOnScreen.push(
+      this.store.objectsOnScreen.push(
         new Bullet(
+          this.p5,
+          this.store,
           this.getRadiusPosition(
             -this.angle + radians(270),
             this.radius + BULLET_SIZE,
@@ -92,38 +54,44 @@ class Vehicle extends SVGPaths {
         ),
       );
       this.power -= 0.3;
-      blaster.play();
+      this.store.audio.play("blaster");
     }
   }
 }
-class Craft extends Vehicle {
-  constructor(position, speed, angle, size, viewBox, shapes) {
-    super(position, speed, angle, size, viewBox, shapes);
+export class Craft extends Vehicle {
+  constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
+    super(p5, store, position, speed, angle, size, viewBox, shapes);
     this.lives = 6;
     this.tintActive = false;
     this.tintTimer = 500;
-    // this.mass = 0.5;
+    this.store = store;
+    this.targets = [];
+  }
+  targetsReached(target) {
+    this.targets.shift();
+    this.lives = 6;
+    this.power = 10;
   }
   handleCollision(dist, gameObject) {
     super.handleCollision(dist, gameObject);
-    burn.stop();
+    this.store.audio.pause("burn");
   }
 
   removeFromWorld() {
     if (this.lives > 1) {
       this.lives--;
       this.tintActive = true;
-      this.tintTimer = millis();
-      shield.play();
+      this.tintTimer = this.p5.millis();
+      this.store.audio.play("shield");
     } else {
-      endgame = "Game Over";
-      super.explode();
       super.removeFromWorld();
+      this.store.endgame = "Game Over";
     }
   }
   handleMovement() {
     super.handleMovement();
-
+    const { store, p5 } = this;
+    const { width, height } = p5;
     const multiplierX = store.screenTopLeftCorner.x / width + 1;
     const multiplierY = store.screenTopLeftCorner.y / height + 1;
     const threshold = 0.5; // 80% of the screen
@@ -136,82 +104,81 @@ class Craft extends Vehicle {
     store.screenTopLeftCorner.x = this.position.x - width * threshold;
     store.screenTopLeftCorner.y = this.position.y - height * threshold;
 
-    objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
-      x: store.screenTopLeftCorner.x + width,
-      y: store.screenTopLeftCorner.y + height,
-    });
+    store.updateObjectsOnScreen(width, height);
 
-    if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
+    if (p5.keyIsDown(p5.LEFT_ARROW) || p5.keyIsDown(65)) {
       if (this.angle >= 2 * Math.PI) {
         this.angle = 0;
       }
       this.angle += TURN_SPEED;
     }
-    if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) {
+    if (p5.keyIsDown(p5.RIGHT_ARROW) || p5.keyIsDown(68)) {
       if (this.angle <= 0) {
         this.angle = 2 * Math.PI;
       }
       this.angle -= TURN_SPEED;
     }
-    if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
+    if (p5.keyIsDown(p5.UP_ARROW) || p5.keyIsDown(87)) {
       if (this.power >= 0) {
         this.emitter.addParticle(
-          this.getRadiusPosition(-this.angle - radians(270), this.radius),
+          this.getRadiusPosition(-this.angle - p5.radians(270), this.radius),
         );
         this.speed = CRAFT_SPEED;
-        if (!burn.isPlaying()) {
-          burn.play();
+        if (!this.store.audio.isPlaying("burn")) {
+          this.store.audio.play("burn");
         }
         this.power -= 0.01;
       }
     } else {
       this.speed = 0;
-      burn.stop();
+      this.store.audio.stop("burn");
     }
   }
   getParticleDirection() {
-    const force = p5.Vector.fromAngle(-this.angle - radians(270));
+    const force = p5.Vector.fromAngle(-this.angle - this.p5.radians(270));
     force.normalize();
     force.div(50);
     return force;
   }
 
-  draw(ctx) {
+  draw(offset, ctx) {
     if (this.tintActive) {
-      if (millis() - this.tintTimer > FIRE_INTERVAL / 10) {
+      if (this.p5.millis() - this.tintTimer > FIRE_INTERVAL / 10) {
         this.tintActive = false;
       }
     }
     super.draw(
+      offset,
       ctx,
-      this.tintActive ? "red" : targets.length === 0 && glow(true),
+      this.tintActive ? "red" : this.targets.length === 0 && glow(null, true),
     );
   }
 }
 
-class EnemyCraft extends Vehicle {
-  constructor(position, speed, angle, size, viewBox, shapes) {
-    super(position, speed, angle, size, viewBox, shapes);
+export class EnemyCraft extends Vehicle {
+  constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
+    super(p5, store, position, speed, angle, size, viewBox, shapes);
     this.lastFireTime = 0;
+    this.spawnsPowerUp = true;
   }
   removeFromWorld() {
     super.removeFromWorld();
-    objectsOnScreen.push(
-      objectFactory.createPowerUp(this.position, this.speed),
-    );
   }
   handleMovement() {
     // make the craft face the player
-    const dist = p5.Vector.dist(this.position, craft.position);
-    if (!endgame && dist < CHASE_DISTANCE) {
-      const angle = p5.Vector.sub(this.position, craft.position).heading();
-      this.angle = -angle - radians(270);
+    const dist = p5.Vector.dist(this.position, this.store.craft.position);
+    if (!this.store.endgame && dist < CHASE_DISTANCE) {
+      const angle = p5.Vector.sub(
+        this.position,
+        this.store.craft.position,
+      ).heading();
+      this.angle = -angle - this.p5.radians(270);
       // move the craft
       this.speed = CRAFT_SPEED / 2;
       // fire every second
-      if (millis() - this.lastFireTime > FIRE_INTERVAL) {
+      if (this.p5.millis() - this.lastFireTime > FIRE_INTERVAL) {
         this.fire();
-        this.lastFireTime = millis();
+        this.lastFireTime = this.p5.millis();
       }
     }
     super.handleMovement();
@@ -219,16 +186,16 @@ class EnemyCraft extends Vehicle {
 }
 
 class Particle extends Entity {
-  constructor(position, speed, angle, size) {
-    super(position, speed, angle, size);
-    let vx = randomGaussian(0, 0.3);
-    let vy = randomGaussian(-1, 0.3);
-    this.velocity = createVector(vx, vy);
-    this.acceleration = createVector(0, 0);
+  constructor(p5, store, position, speed, angle, size) {
+    super(p5, store, position, speed, angle, size);
+    let vx = p5.randomGaussian(0, 0.3);
+    let vy = p5.randomGaussian(-1, 0.3);
+    this.velocity = p5.createVector(vx, vy);
+    this.acceleration = p5.createVector(0, 0);
   }
-  run() {
-    this.update();
-    this.show();
+  run(offset, ctx) {
+    this.update(ctx);
+    this.show(offset, ctx);
   }
 
   // Method to update position
@@ -238,45 +205,49 @@ class Particle extends Entity {
     this.lifespan -= 2;
     this.acceleration.mult(0); // clear Acceleration
   }
-show(r = 248, g = 223, b = 166) {
-  const p = this.getPositionOffset();
+  show(offset, ctx, r = 248, g = 223, b = 166) {
+    const p = this.getPositionOffset(offset);
+    // Create a radial gradient
+    const gradient = ctx.createRadialGradient(
+      p.x,
+      p.y,
+      0,
+      p.x,
+      p.y,
+      this.size / 2,
+    );
+    gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${this.lifespan / 200})`);
+    gradient.addColorStop(
+      0.6,
+      `rgba(${r}, ${g}, ${b}, ${this.lifespan / 255})`,
+    );
+    gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
 
-  // Create a radial gradient
-  const gradient = drawingContext.createRadialGradient(
-    p.x,
-    p.y,
-    0,
-    p.x,
-    p.y,
-    this.size / 2
-  );
-  gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${this.lifespan / 200})`);
-  gradient.addColorStop(0.6, `rgba(${r}, ${g}, ${b}, ${this.lifespan / 255})`);
-  gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+    // Apply the gradient
+    ctx.fillStyle = gradient;
 
-  // Apply the gradient
-  drawingContext.fillStyle = gradient;
-
-  // Draw a single circle
-  drawingContext.beginPath();
-  drawingContext.arc(p.x, p.y, this.size / 2, 0, Math.PI * 2);
-  drawingContext.fill();
-}
+    // Draw a single circle
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, this.size / 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
   // Is the particle still useful?
   isDead() {
     return this.lifespan < 0.0;
   }
 }
-class Emitter {
-  constructor(origin) {
+export class Emitter {
+  constructor(p5, store, origin) {
     this.particles = []; // Initialize the arraylist
     this.origin = origin; // Store the origin point
+    this.p5 = p5; // Store the p5 object
+    this.store = store; // Store the game state object
   }
 
-  run() {
+  run(offset, ctx) {
     for (let particle of this.particles) {
-      particle.run();
+      particle.run(offset, ctx);
     }
     this.particles = this.particles.filter((particle) => !particle.isDead());
   }
@@ -289,12 +260,17 @@ class Emitter {
   }
 
   addParticle(particle = this.origin) {
-    const ratio = width > height ? width : height;
+    const ratio =
+      this.p5.width > this.p5.height ? this.p5.width : this.p5.height;
+
+    const size = ratio / this.p5.random(30, 50);
     const p = new Particle(
+      this.p5,
+      this.store,
+      particle,
       { x: particle.x, y: particle.y },
       0,
-      0,
-      ratio / random(30, 50),
+      size,
     );
     this.particles.push(p);
   }

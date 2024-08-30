@@ -1,16 +1,24 @@
-class Entity {
-  constructor(position, speed, angle, size) {
-    this.position = createVector(position.x, position.y);
-    this.velocity = createVector();
+import p5 from "https://esm.sh/p5@1.10.0";
+import { CANVAS_SIZE } from "./constants.js";
+import { Emitter } from "./classes.js";
+import { SVGPaths } from "./gameobjects.js";
+
+export class Entity {
+  constructor(p5, store, position, speed, angle, size) {
+    this.position = p5.createVector(position.x, position.y);
+    this.velocity = p5.createVector();
     this.lifespan = 30.0;
-    this.acceleration = createVector();
+    this.acceleration = p5.createVector();
     this.speed = speed;
     this.angle = angle;
     this.radius = size / 2;
     this.size = size;
     this.collides = false;
-    this.emitter = new Emitter(this.position);
+    this.emitter = new Emitter(p5, store, position);
     this.mass = 10;
+    this.p5 = p5;
+    this.store = store;
+    this.isToBeRemoved = false;
   }
   equals(other) {
     const className = this.constructor.name;
@@ -25,8 +33,7 @@ class Entity {
   handleMovement() {}
 
   removeFromWorld() {
-    objectsOnScreen.splice(objectsOnScreen.indexOf(this), 1);
-    store.remove(this);
+    this.isToBeRemoved = true;
   }
 
   isMoving() {
@@ -43,7 +50,7 @@ class Entity {
     const min = 10;
     const max = 30;
 
-    let d = constrain(force.mag(), min, max);
+    let d = this.p5.constrain(force.mag(), min, max);
     const G = CANVAS_SIZE / 900; // scale G based on screen size
 
     let strength = (G * (this.mass * body.mass)) / (d * d);
@@ -65,25 +72,35 @@ class Entity {
     return cornerDistanceSq <= this.radius ** 2;
   }
 
-  getPositionOffset() {
+  getPositionOffset(offset) {
     const p = this.position.copy();
-    p.sub(store.screenTopLeftCorner);
+    p.sub(offset);
     return p;
   }
-  draw() {
+  draw(offset, ctx) {
     if (this.emitter.particles.length > 0) {
-      this.emitter.run();
+      this.emitter.run(offset, ctx);
     }
   }
 }
 
-class Explosion extends Entity {
-  constructor(position, speed, angle, size, mass, shockwave = false) {
-    super(position, speed, angle, size);
+export class Explosion extends Entity {
+  constructor(
+    p5,
+    store,
+    position,
+    speed,
+    angle,
+    size,
+    mass,
+    shockwave = false,
+  ) {
+    super(p5, store, position, speed, angle, size);
     this.collides = false;
-    this.lifespan = Math.sqrt(this.size) * 1.6 * (60 / frameRate());
+    this.lifespan = Math.sqrt(this.size) * 1.6 * (60 / p5.frameRate());
     this.mass = mass;
     this.shockwave = shockwave;
+    this.store = store;
   }
   handleMovement() {
     if (this.lifespan > 0) {
@@ -98,7 +115,7 @@ class Explosion extends Entity {
             ),
           );
       }
-      objectsOnScreen
+      this.store.objectsOnScreen
         .filter(
           (object) =>
             p5.Vector.dist(object.position, this.position) < CANVAS_SIZE * 0.7,
@@ -108,7 +125,7 @@ class Explosion extends Entity {
             this.applyGravity(object, true);
           }
         });
-      this.applyGravity(craft, true);
+      this.applyGravity(this.store.craft, true);
 
       return;
     }
@@ -116,15 +133,15 @@ class Explosion extends Entity {
   }
 }
 
-class Singularity extends Entity {
-  constructor(position, speed, angle, size) {
-    super(position, speed, angle, size);
+export class Singularity extends Entity {
+  constructor(p5, store, position, speed, angle, size) {
+    super(p5, store, position, speed, angle, size);
     this.collides = false;
     this.mass = 1;
     this.range = 0.7;
   }
   handleMovement() {
-    objectsOnScreen
+    this.store.objectsOnScreen
       .filter(
         (object) =>
           p5.Vector.dist(object.position, this.position) <
@@ -134,93 +151,33 @@ class Singularity extends Entity {
         if (!object.equals(this) && object instanceof SVGPaths) {
           this.applyGravity(object);
           object.checkCollision(this);
+          if (object.isToBeRemoved) {
+            this.store.removeFromWorld(object);
+          }
         }
       });
-    const craftRange = p5.Vector.dist(craft.position, this.position);
+    const craftRange = p5.Vector.dist(this.store.craft.position, this.position);
     if (craftRange < CANVAS_SIZE * this.range) {
       if (craftRange < this.size) {
-        if (targets.length === 0) {
-          endgame = "You made it!";
+        if (this.store.targets.length === 0) {
+          this.store.endgame = "You made it!";
           return;
         }
-        endgame = "Game Over";
+        this.store.endgame = "Game Over";
         return;
       }
-      this.applyGravity(craft);
-      craft.checkCollision(this);
-    }
-  }
-  draw() {
-    const p = this.getPositionOffset();
-
-    fill(0);
-    noStroke();
-    circle(p.x, p.y, this.size);
-  }
-}
-
-class GameObject extends Entity {
-  constructor(position, speed, angle, size) {
-    super(position, speed, angle, size);
-    this.collides = true;
-  }
-
-  isCollision(gameObject) {
-    const dist = p5.Vector.sub(gameObject.position, this.position);
-    if (dist.mag() <= gameObject.radius + this.radius) {
-      return dist;
-    }
-    return null;
-  }
-  checkCollision(gameObject) {
-    const dist = this.isCollision(gameObject);
-    if (dist) {
-      this.handleCollision(dist, gameObject);
-    }
-  }
-  handleCollision(dist, gameObject) {
-    if (gameObject instanceof Craft) {
-      if (!endgame && gameObject?.lives === 0) {
-        gameObject.explode();
-        endgame = "Game Over";
-      }
-      if (gameObject.lives) {
-        gameObject.lives -= 1;
+      this.applyGravity(this.store.craft);
+      this.store.craft.checkCollision(this);
+      if (this.store.craft.isToBeRemoved) {
+        this.store.removeFromWorld(this.store.craft);
       }
     }
-    if (gameObject instanceof Singularity) {
-      this.removeFromWorld();
-      gameObject.mass += 1;
-      gameObject.size += CRAFT_SIZE / 2;
-    }
   }
-  handleMovement(friction = true) {
-    let directionVector = p5.Vector.fromAngle(-this.angle + radians(270));
-    directionVector.setMag(this.speed);
-    this.acceleration.add(directionVector);
+  draw(offset) {
+    const p = this.getPositionOffset(offset);
 
-    this.velocity.add(this.acceleration);
-    friction && this.velocity.limit(TOP_SPEED);
-    this.position.add(this.velocity);
-
-    // Deceleration.
-    if (friction) {
-      if (this.velocity.mag() > 0.02) {
-        this.velocity.mult(0.99);
-      } else {
-        this.velocity.x = 0;
-        this.velocity.y = 0;
-      }
-      this.acceleration.mult(0);
-    }
-  }
-}
-
-class Star extends Entity {
-  draw() {
-    fill(255);
-    // const p = this.getPositionOffset();
-    const p = this.position;
-    ellipse(p.x, p.y, this.size, this.size);
+    this.p5.fill(0);
+    this.p5.noStroke();
+    this.p5.circle(p.x, p.y, this.size);
   }
 }
