@@ -15,7 +15,7 @@ import { glow, radians } from "./helpers.js";
 export class Mine extends SVGPaths {
   constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
     super(p5, store, position, speed, angle, size, viewBox, shapes);
-    // this.mass = 2;
+    this.targets = [];
   }
 
   handleCollision(dist, gameObject) {
@@ -50,7 +50,7 @@ class Vehicle extends SVGPaths {
           ),
           BULLET_SPEED,
           this.angle,
-          BULLET_SIZE,
+            {horizontal: BULLET_SIZE, vertical: BULLET_SIZE},
         ),
       );
       this.power -= 0.3;
@@ -66,6 +66,7 @@ export class Craft extends Vehicle {
     this.tintTimer = 500;
     this.store = store;
     this.targets = [];
+    this.p5 = p5;
   }
   targetsReached(target) {
     this.targets.shift();
@@ -85,7 +86,6 @@ export class Craft extends Vehicle {
       this.store.audio.play("shield");
     } else {
       super.removeFromWorld();
-      this.store.endgame = "Game Over";
     }
   }
   handleMovement() {
@@ -150,7 +150,7 @@ export class Craft extends Vehicle {
     super.draw(
       offset,
       ctx,
-      this.tintActive ? "red" : this.targets.length === 0 && glow(null, true),
+      this.tintActive ? "red" : this.targets.length === 0 && glow(this.p5, true),
     );
   }
 }
@@ -270,7 +270,7 @@ export class Emitter {
       particle,
       { x: particle.x, y: particle.y },
       0,
-      size,
+        {horizontal: size, vertical: size },
     );
     this.particles.push(p);
   }

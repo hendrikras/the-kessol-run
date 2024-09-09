@@ -4,7 +4,7 @@ import { Emitter } from "./classes.js";
 import { SVGPaths } from "./gameobjects.js";
 
 export class Entity {
-  constructor(p5, store, position, speed, angle, size) {
+  constructor(p5, store, position, speed, angle, {horizontal: size}) {
     this.position = p5.createVector(position.x, position.y);
     this.velocity = p5.createVector();
     this.lifespan = 30.0;
@@ -140,8 +140,8 @@ export class Singularity extends Entity {
     this.mass = 1;
     this.range = 0.7;
   }
-  handleMovement() {
-    this.store.objectsOnScreen
+  handleMovement(objectsOnScreen, craft) {
+    objectsOnScreen
       .filter(
         (object) =>
           p5.Vector.dist(object.position, this.position) <
@@ -159,18 +159,13 @@ export class Singularity extends Entity {
     const craftRange = p5.Vector.dist(this.store.craft.position, this.position);
     if (craftRange < CANVAS_SIZE * this.range) {
       if (craftRange < this.size) {
-        if (this.store.targets.length === 0) {
-          this.store.endgame = "You made it!";
-          return;
+        if (craft.targets.length === 0) {
+          return "You made it!";
         }
-        this.store.endgame = "Game Over";
-        return;
+        return "Game Over";
       }
-      this.applyGravity(this.store.craft);
-      this.store.craft.checkCollision(this);
-      if (this.store.craft.isToBeRemoved) {
-        this.store.removeFromWorld(this.store.craft);
-      }
+      this.applyGravity(craft);
+      craft.checkCollision(this);
     }
   }
   draw(offset) {

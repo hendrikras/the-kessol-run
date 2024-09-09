@@ -1,6 +1,6 @@
 import p5 from "https://esm.sh/p5@1.10.0";
-import { CRAFT_SIZE, TOP_SPEED } from "./constants.js";
-import { Entity, Explosion, Singularity } from "./entities.js";
+import {BULLET_SIZE, CRAFT_SIZE, TOP_SPEED} from "./constants.js";
+import { Entity, Singularity } from "./entities.js";
 import { glow } from "./helpers.js";
 import { Craft } from "./classes.js";
 
@@ -29,9 +29,6 @@ export class GameObject extends Entity {
 
   handleCollision(dist, gameObject) {
     if (gameObject instanceof Craft) {
-      if (!this.store.endgame && gameObject?.lives === 0) {
-        this.store.endgame = "Game Over";
-      }
       if (gameObject.lives) {
         gameObject.lives -= 1;
       }
@@ -115,9 +112,9 @@ export class SVGPaths extends GoesKaboom {
     super(p5, store, position, speed, angle, size);
     this.shapes = shapes;
     this.viewBox = viewBox;
-    const [minX, minY, h, w] = viewBox.split(" ");
-    this.scaleX = size / w;
-    this.scaleY = size / h;
+    const [minX, minY, w, h] = viewBox.split(" ");
+    this.scaleX = size.horizontal / w;
+    this.scaleY = size.vertical / h;
     this.width = w;
     this.height = h;
   }
@@ -157,7 +154,7 @@ export class SVGPaths extends GoesKaboom {
     ctx.translate(pos.x, pos.y);
 
     this.shapes.forEach((shape) => {
-      const path = new Path2D(shape.path);
+      const path = new Path2D(shape.d);
       const color = shape.fill;
       ctx.fillStyle = colorOverride || color;
       ctx.fill(path);
@@ -167,8 +164,8 @@ export class SVGPaths extends GoesKaboom {
   }
 }
 
-class Turret extends GoesKaboom {
-  constructor(p5, store, position, size) {
+export class Turret extends GoesKaboom {
+  constructor(p5, store, position, {horizontal: size}) {
     super(p5, store, position, 0, 0, size); // Speed is 0 since it doesn't move
     this.radius = size / 2;
     this.barrelLength = size * 0.8;
@@ -213,7 +210,7 @@ class Turret extends GoesKaboom {
         this.angle,
         BULLET_SIZE,
       );
-      objectsOnScreen.push(bullet);
+      this.store.objectsOnScreen.push(bullet);
 
       this.lastFireTime = currentTime;
     }
