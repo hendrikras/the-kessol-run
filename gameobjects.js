@@ -1,5 +1,5 @@
 import p5 from "https://esm.sh/p5@1.10.0";
-import {BULLET_SIZE, CRAFT_SIZE, TOP_SPEED} from "./constants.js";
+import {BULLET_SIZE, BULLET_SPEED, CANVAS_SIZE, CRAFT_SIZE, FIRE_INTERVAL, TOP_SPEED} from "./constants.js";
 import { Entity, Singularity } from "./entities.js";
 import { glow } from "./helpers.js";
 import { Craft } from "./classes.js";
@@ -108,7 +108,7 @@ class GoesKaboom extends GameObject {
   }
 }
 export class SVGPaths extends GoesKaboom {
-  constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
+  constructor(p5, store, position, speed, angle, size, viewBox, shapes, rotate = null) {
     super(p5, store, position, speed, angle, size);
     this.shapes = shapes;
     this.viewBox = viewBox;
@@ -117,6 +117,7 @@ export class SVGPaths extends GoesKaboom {
     this.scaleY = size.vertical / h;
     this.width = w;
     this.height = h;
+    this.rotate = rotate;
   }
   handleCollision(dist, gameObject) {
     super.handleCollision(dist, gameObject);
@@ -129,7 +130,7 @@ export class SVGPaths extends GoesKaboom {
     this.velocity.mult(0.9);
     gameObject.velocity.mult(0.75);
     this.acceleration.add(_dist.mult(0.5 * vStore));
-    this.store.audio.stop("burn");
+    // this.store.audio.stop("burn");
     this.store.audio.play("boom");
   }
 
@@ -152,6 +153,9 @@ export class SVGPaths extends GoesKaboom {
       p.y,
     );
     ctx.translate(pos.x, pos.y);
+    if (this.rotate){
+      ctx.rotate(this.rotate);
+    }
 
     this.shapes.forEach((shape) => {
       const path = new Path2D(shape.d);
@@ -165,13 +169,12 @@ export class SVGPaths extends GoesKaboom {
 }
 
 export class Turret extends GoesKaboom {
-  constructor(p5, store, position, {horizontal: size}) {
+  constructor(p5, store, position, size) {
     super(p5, store, position, 0, 0, size); // Speed is 0 since it doesn't move
-    this.radius = size / 2;
-    this.barrelLength = size * 0.8;
-    this.barrelWidth = size * 0.2;
+    this.radius = size.horizontal / 2;
+    this.barrelLength = size.horizontal * 0.8;
+    this.barrelWidth = size.horizontal * 0.2;
     this.fireRange = CANVAS_SIZE * 0.6; // 30% of canvas size
-    this.fireRate = 2; // Fires every 2 seconds
     this.lastFireTime = 20;
     this.collides = true;
   }
@@ -182,33 +185,31 @@ export class Turret extends GoesKaboom {
 
   handleMovement() {
     // Update angle to face the player
-    const angle = p5.Vector.sub(this.position, craft.position).heading();
+    const angle = p5.Vector.sub(this.position, this.store.craft.position).heading();
     this.angle = -angle - this.p5.radians(270);
 
     // Check if player is in range and fire if conditions are met
-    let distanceToPlayer = p5.Vector.dist(this.position, craft.position);
-    if (distanceToPlayer <= this.fireRange) {
+    let distanceToPlayer = p5.Vector.dist(this.position, this.store.craft.position);
+    if (!this.store.endgame && distanceToPlayer <= this.fireRange) {
       this.fire();
     }
   }
 
   fire() {
-    let currentTime = millis();
+    let currentTime = this.p5.millis();
     if (currentTime - this.lastFireTime > FIRE_INTERVAL) {
-      let bulletSpeed = 5;
-      let bulletSize = this.size / 4;
-      let bulletPosition = this.position
-        .copy()
-        .add(p5.Vector.fromAngle(this.angle).mult(this.barrelLength) * 3);
 
       const bullet = new Bullet(
+          this.p5,
+          this.store,
+
         this.getRadiusPosition(
           -this.angle + this.p5.radians(270),
           this.radius + BULLET_SIZE,
         ),
         BULLET_SPEED,
         this.angle,
-        BULLET_SIZE,
+          {horizontal: BULLET_SIZE, vertical: BULLET_SIZE },
       );
       this.store.objectsOnScreen.push(bullet);
 
@@ -216,22 +217,33 @@ export class Turret extends GoesKaboom {
     }
   }
 
-  draw(offset) {
+  draw(offset, ctx) {
     const p = this.getPositionOffset(offset);
 
     // Draw base
-    this.p5.fill(100);
-    this.p5.noStroke();
-    this.p5.circle(p.x, p.y, this.radius * 2);
+    ctx.fillStyle = 'rgb(150, 150, 150)';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, this.radius, 0, 2 * Math.PI);
+    ctx.fill();
 
     // Draw barrel
-    this.p5.push();
-    this.p5.translate(p.x, p.y);
-    this.p5.rotate(-this.angle + this.p5.radians(270));
-    this.p5.fill(80);
-    this.p5.rectMode(CENTER);
-    this.p5.rect(this.barrelLength / 2, 0, this.barrelLength, this.barrelWidth);
-    this.p5.pop();
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(-this.angle + this.p5.radians(270));
+    ctx.fillStyle = 'rgb(130, 130, 130)';
+    ctx.fillRect(this.barrelLength, -this.barrelWidth / 2, -this.barrelLength, this.barrelWidth);
+
+    // Draw glowing red circle in the center
+    const glowColor = glow(this.p5);
+    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius / 2);
+    gradient.addColorStop(0, 'rgba(255, 40, 10, 0.5)');
+    gradient.addColorStop(1, glowColor);
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(0, 0, this.radius / 2, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.restore();
   }
 }
 export class PowerUp extends SVGPaths {

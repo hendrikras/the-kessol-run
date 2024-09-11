@@ -32,6 +32,40 @@ export class Rock extends SVGPaths {
   }
 }
 
+export class Meteor extends SVGPaths {
+  constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
+    super(p5, store, position, speed, angle, size, viewBox, shapes);
+    this.emitter = new Emitter(p5, store, this.position);
+  }
+
+  handleCollision(dist, gameObject) {
+    super.handleCollision(dist, gameObject);
+    this.removeFromWorld();
+    gameObject.removeFromWorld();
+  }
+
+handleMovement(friction = false) {
+    super.handleMovement(friction);
+    for (let i = 0; i < 5; i++) {
+        const offset = this.p5.random(0, this.radius * 1.5);
+      const grayValue = this.p5.random(100, 200);
+      const grayValue2 = this.p5.random(100, 200);
+      const grayValue3 = this.p5.random(100, 200);
+        this.emitter.addParticle(
+            this.getRadiusPosition(-this.angle - this.p5.radians(270), this.radius + offset),
+            [grayValue, grayValue2, grayValue3] // Gray color
+        );
+    }
+}
+  
+  draw(offset, ctx, colorOverride) {
+    super.draw(offset, ctx, colorOverride);
+    if (this.emitter.particles.length > 0) {
+      this.emitter.run(offset, ctx);
+    }
+  }
+}
+
 class Vehicle extends SVGPaths {
   constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
     super(p5, store, position, speed, angle, size, viewBox, shapes);
@@ -75,7 +109,7 @@ export class Craft extends Vehicle {
   }
   handleCollision(dist, gameObject) {
     super.handleCollision(dist, gameObject);
-    this.store.audio.pause("burn");
+    // this.store.audio.stop("burn");
   }
 
   removeFromWorld() {
@@ -124,21 +158,12 @@ export class Craft extends Vehicle {
           this.getRadiusPosition(-this.angle - p5.radians(270), this.radius),
         );
         this.speed = CRAFT_SPEED;
-        if (!this.store.audio.isPlaying("burn")) {
-          this.store.audio.play("burn");
-        }
         this.power -= 0.01;
       }
     } else {
       this.speed = 0;
-      this.store.audio.stop("burn");
+      this.store.audio.pause("burn");
     }
-  }
-  getParticleDirection() {
-    const force = p5.Vector.fromAngle(-this.angle - this.p5.radians(270));
-    force.normalize();
-    force.div(50);
-    return force;
   }
 
   draw(offset, ctx) {
@@ -186,16 +211,17 @@ export class EnemyCraft extends Vehicle {
 }
 
 class Particle extends Entity {
-  constructor(p5, store, position, speed, angle, size) {
+  constructor(p5, store, position, speed, angle, size, color = [undefined, undefined, undefined]) {
     super(p5, store, position, speed, angle, size);
     let vx = p5.randomGaussian(0, 0.3);
     let vy = p5.randomGaussian(-1, 0.3);
     this.velocity = p5.createVector(vx, vy);
     this.acceleration = p5.createVector(0, 0);
+    this.color = color;
   }
   run(offset, ctx) {
     this.update(ctx);
-    this.show(offset, ctx);
+    this.show(offset, ctx, this.color[0], this.color[1], this.color[2]);
   }
 
   // Method to update position
@@ -259,10 +285,9 @@ export class Emitter {
     }
   }
 
-  addParticle(particle = this.origin) {
+  addParticle(particle = this.origin, color) {
     const ratio =
       this.p5.width > this.p5.height ? this.p5.width : this.p5.height;
-
     const size = ratio / this.p5.random(30, 50);
     const p = new Particle(
       this.p5,
@@ -271,6 +296,7 @@ export class Emitter {
       { x: particle.x, y: particle.y },
       0,
         {horizontal: size, vertical: size },
+        color
     );
     this.particles.push(p);
   }

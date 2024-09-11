@@ -1,7 +1,7 @@
 import p5 from "https://esm.sh/p5@1.10.0";
 import { parse} from "https://esm.sh/pathologist@0.1.9";
-import {CANVAS_SIZE, CRAFT_SIZE, innerHeight, ROCK_SIZE} from "./constants.js";
-import {Craft, EnemyCraft, Mine, Rock} from "./classes.js";
+import {CANVAS_SIZE, CRAFT_SIZE, innerHeight, ROCK_SIZE, ROCK_SPEED} from "./constants.js";
+import {Craft, EnemyCraft, Meteor, Mine, Rock} from "./classes.js";
 import {Bullet, Pointer, SVGPaths, Target, PowerUp, Turret} from "./gameobjects.js";
 import {Explosion, Singularity} from "./entities.js";
 import {radians, calculateSVGBoundingBox} from "./helpers.js";
@@ -73,6 +73,7 @@ export class GameObjectFactory {
       const w = width * (deltaWidth / 100);
       const h = height * (deltaWidth / 100);
       const transform = GroupElement.getAttribute("transform");
+      const rotate = GroupElement.getAttribute("rotate");
       const [x, y] = transform
           .match(/translate\(([^,]+),([^,]+)\)/)
           ?.slice(1)
@@ -97,6 +98,7 @@ export class GameObjectFactory {
         { horizontal, vertical },
       viewbox,
       shapes,
+        rotate
     );
     object.collides = false;
     object.checkCollision = () => false;
@@ -109,17 +111,19 @@ export class GameObjectFactory {
     speed = 0,
     angle = this.p5.radians(200),
     size = ROCK_SIZE,
+    isMeteor = false,
   ) {
     const [shapes, viewbox] = this.asteroidShapes;
-    return new Rock(
+    const Asteroid = isMeteor ? Meteor : Rock;
+    return new Asteroid(
       this.p5,
       this.store,
       position,
       speed,
       angle,
-        {vertical: size, horizontal:size},
+      {vertical: size, horizontal: size},
       viewbox,
-      shapes,
+      shapes
     );
   }
 
@@ -201,6 +205,32 @@ export class World {
         this.craft = null;
         this.endgame = null;
         this.objectFactory = null;
+        this.asteroidsSpawned = false;
+    }
+     getRandomEdgePosition() {
+        const edge = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
+        const x = this.screenTopLeftCorner.x;
+        const y = this.screenTopLeftCorner.y;
+        const width = innerWidth;
+        const height = innerHeight;
+
+        switch (edge) {
+            case 0: // top
+                return new p5.Vector(x + Math.random() * width, y);
+            case 1: // right
+                return new p5.Vector(x + width, y + Math.random() * height);
+            case 2: // bottom
+                return new p5.Vector(x + Math.random() * width, y + height);
+            case 3: // left
+                return new p5.Vector(x, y + Math.random() * height);
+        }
+    }
+    checkTimerAndSpawnAsteroids(randomDirection) {
+        for (let i = 0; i < 2; i++) {
+          const position = this.getRandomEdgePosition();
+          const asteroid = this.objectFactory.createRock(position, ROCK_SPEED, randomDirection.heading(), ROCK_SIZE / 10, true);
+          this.add(asteroid);
+        }
     }
 
     getTargetPosition(angle) {
