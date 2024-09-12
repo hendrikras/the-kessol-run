@@ -226,6 +226,9 @@ export class World {
         }
     }
     checkTimerAndSpawnAsteroids(randomDirection) {
+        if(!this.audio.isPlaying('alarm')) {
+            this.audio.play('alarm');
+        }
         for (let i = 0; i < 2; i++) {
           const position = this.getRandomEdgePosition();
           const asteroid = this.objectFactory.createRock(position, ROCK_SPEED, randomDirection.heading(), ROCK_SIZE / 10, true);

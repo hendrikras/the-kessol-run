@@ -12,7 +12,7 @@ export default class AudioManager {
   }
 
   preload() {
-    // this.setAudioElement("bang", "bang.mp3");
+    this.setAudioElement("alarm", "alarm.mp3");
     this.setAudioElement("blaster", "blaster.mp3");
     this.setAudioElement("boom", "bang.mp3");
     this.setAudioElement("burn", "burn.mp3");
