@@ -3,8 +3,9 @@ import AudioManager from "./AudioManager.js";
 import {CANVAS_SIZE, CRAFT_SIZE, FIRE_INTERVAL, innerHeight, ROCK_SIZE, STAR_COUNT, STAR_SIZE,} from "./constants.js";
 import {PowerBar} from "./hud.js";
 import {World, GameObjectFactory} from "./World.js";
+import {Spring} from "./classes.js";
 
-let backgroundImage, gamemap, objectFactory, powerBar, world, pointer, lastAsteroid, showerDirection;
+let backgroundImage, gamemap, objectFactory, powerBar, world, pointer, lastAsteroid, bob, spring;
 
 function generateStars(p5) {
     backgroundImage = p5.createImage(innerWidth, innerHeight);
@@ -46,8 +47,8 @@ new p5(function (p5) {
     };
 
     p5.setup = function () {
+        bob = null;
         lastAsteroid = 0;
-        showerDirection = p5.createVector(p5.random(-1, 1), p5.random(-1, 1)).normalize();
         p5.textAlign(p5.CENTER);
         p5.createCanvas(innerWidth, innerHeight);
         generateStars(p5);
@@ -60,16 +61,26 @@ new p5(function (p5) {
 
         const w = objectFactory.elements[0].getAttribute("width");
         // Initialize world objects
-        let targets;
+        const targets = [];
         objectFactory.elements.forEach((el) => {
             switch (el.tagName) {
-                case "rect": // start screen position
-                    const x = el.getAttribute("x");
-                    const y = el.getAttribute("y");
+        case "rect":
+            const x = el.getAttribute("x");
+            const y = el.getAttribute("y");
+            const width = el.getAttribute("width");
+            const height = el.getAttribute("height");
+            const fill = el.getAttribute("fill");
 
-                    unit = CANVAS_SIZE / w;
-                    offset = p5.createVector(x * unit, y * unit);
-                    break;
+            if (!unit) {
+                unit = CANVAS_SIZE / w;
+                offset = p5.createVector(x * unit, y * unit);
+            } else {
+                const position = p5.createVector(x * unit, y * unit).sub(offset);
+                const isSafe = fill.toLowerCase() === "#00ff00" || fill.toLowerCase() === "green";
+                const zone = objectFactory.createZone(position, width * unit, height * unit, isSafe);
+                world.add(zone);
+            }
+            break;
                 case "circle": // asteroids
                     const cx = el.getAttribute("cx");
                     const cy = el.getAttribute("cy");
@@ -107,7 +118,7 @@ new p5(function (p5) {
                     break;
                 case "polygon": // Targets
                     const points = el.getAttribute("points").split(" ");
-                    targets = points.reduce((acc, _, index, array) => {
+                    targets.push( ...points.reduce((acc, _, index, array) => {
                         if (index % 2 === 0) {
                             acc.push(
                                 objectFactory.createGoal(
@@ -118,7 +129,7 @@ new p5(function (p5) {
                             );
                         }
                         return acc;
-                    }, []);
+                    }, []));
                     break;
                 case "g": // group
                     const backgroundElement = objectFactory.createBackgroundElement(
@@ -181,6 +192,9 @@ new p5(function (p5) {
             },
             0,
         );
+
+        spring = new Spring(p5, world, world.craft.position, 0, 0, {horizontal:0, vertical:0}, 20);
+        // bob = world.objectFactory.createRock(p5.createVector(269, 284), 0, 0, ROCK_SIZE/ 8);
     };
     p5.draw = async function () {
         p5.background("#162F4B");
@@ -208,6 +222,12 @@ new p5(function (p5) {
         p5.textSize(30);
 
         const ctx = p5.drawingContext;
+        if (world.craft.targets.length > 0) {
+            const target = world.craft.targets[0];
+            if (target !== bob) {
+                target.handleMovement();
+            }
+        }
         world.objectsOnScreen.forEach((object, i) => {
             object.checkCollision(world.craft);
 
@@ -217,10 +237,13 @@ new p5(function (p5) {
                 object.handleMovement();
             }
 
+
             world.objectsOnScreen.forEach((other, index) => {
                 if (index !== i && object.collides && other.collides) {
                     object.checkCollision(other);
                 }
+
+
                 object.speed = 0;
             });
             object.draw(world.screenTopLeftCorner, ctx);
@@ -248,7 +271,7 @@ new p5(function (p5) {
                 if (p5.millis() - lastAsteroid > FIRE_INTERVAL / 3) {
                     lastAsteroid = p5.millis();
                     if (powerBar.secondaryTimerStart) {
-                        world.checkTimerAndSpawnAsteroids(showerDirection);
+                        world.checkTimerAndSpawnAsteroids(powerBar.showerDirection);
                     }
 
                 }
@@ -259,7 +282,8 @@ new p5(function (p5) {
             const direction =
                 world.craft.targets.length === 0
                     ? world.closestSingularity()
-                    : world.craft.targets[0];
+                    :
+            world.craft.targets[0];
             const angle = direction.position.copy().sub(world.craft.position).heading();
             // flip horizontally and vertically
             pointer.angle = -angle - p5.radians(90);
@@ -269,10 +293,26 @@ new p5(function (p5) {
             const target = world.craft.targets[0];
             if (target) {
                 target.draw(world.screenTopLeftCorner, ctx);
-                target.checkCollision(world.craft);
+                // target.checkCollision(world.craft);
             }
-        }
-        ;
+
+            if(bob) {
+                spring.connect(bob);
+                // Constrain spring distance between min and max
+                spring.constrainLength(bob, CANVAS_SIZE / 20, CANVAS_SIZE / 5);
+                spring.update();
+                spring.showLine(world.screenTopLeftCorner, bob, ctx); // Draw a line between spring and bob
+                // bob.update();
+
+                if (spring.connectedBob === bob) {
+
+                    // bob.draw(world.screenTopLeftCorner, ctx);
+                    spring.show(world.screenTopLeftCorner, ctx);
+                }
+                // bob.handleMovement()
+
+            }
+        };
 
         p5.keyPressed = function () {
             if (p5.keyIsDown(32)) {
@@ -286,6 +326,14 @@ new p5(function (p5) {
             }
             if (p5.keyIsDown(p5.UP_ARROW) || p5.keyIsDown(87)) {
                 world.audio.play("burn");
+            }
+            if(p5.keyIsDown(p5.DOWN_ARROW)|| p5.keyIsDown(83)) {
+                // get the closest target from the craft
+                if(!bob && world.craft.targets[0].isInReachOfCraft(world.craft, CANVAS_SIZE / 5)) {
+                    bob = world.craft.targets[0];
+                } else {
+                    bob = null;
+                }
             }
         };
     }

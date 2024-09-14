@@ -57,11 +57,13 @@ export class PowerBar {
         this.remainingSeconds = this.totalSeconds;
         this.secondaryTimerDuration = 5; // 5 seconds for the secondary timer
         this.secondaryTimerStart = null;
+        this.showerDirection = p5.createVector(p5.random(-1, 1), p5.random(-1, 1)).normalize();
     }
 
     resetTimer() {
         this.startTime = Date.now();
         this.secondaryTimerStart = null;
+        this.showerDirection = p5.createVector(p5.random(-1, 1), p5.random(-1, 1)).normalize();
     }
 
     draw(p5) {

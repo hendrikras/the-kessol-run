@@ -1,8 +1,8 @@
 import p5 from "https://esm.sh/p5@1.10.0";
 import { parse} from "https://esm.sh/pathologist@0.1.9";
-import {CANVAS_SIZE, CRAFT_SIZE, innerHeight, ROCK_SIZE, ROCK_SPEED} from "./constants.js";
+import {CANVAS_SIZE, CRAFT_SIZE, innerHeight, ROCK_SIZE, ROCK_SPEED, Shape} from "./constants.js";
 import {Craft, EnemyCraft, Meteor, Mine, Rock} from "./classes.js";
-import {Bullet, Pointer, SVGPaths, Target, PowerUp, Turret} from "./gameobjects.js";
+import {Bullet, Pointer, SVGPaths, Target, PowerUp, Turret, SafeZone, Exhaust, NoFlyZone} from "./gameobjects.js";
 import {Explosion, Singularity} from "./entities.js";
 import {radians, calculateSVGBoundingBox} from "./helpers.js";
 
@@ -101,6 +101,7 @@ export class GameObjectFactory {
         rotate
     );
     object.collides = false;
+    object.shape = Shape.RECTANGLE;
     object.checkCollision = () => false;
     object.handleMovement = () => null;
     return object;
@@ -193,6 +194,13 @@ export class GameObjectFactory {
   createTurret(position) {
     return new Turret(this.p5, this.store, position, {horizontal: CRAFT_SIZE / 2, vertical: CRAFT_SIZE / 2});
   }
+  createExhaust(position) {
+    return new Exhaust(this.p5, this.store, position, 0, 0, {horizontal: CRAFT_SIZE, vertical: CRAFT_SIZE});
+  }
+
+  createZone(position, width, height, isSafe) {
+       const zone = isSafe ? new SafeZone(this.p5, this.store, position, width, height) : new NoFlyZone(this.p5, this.store, position, width, height);
+  }
 }
 
 export class World {
@@ -201,6 +209,8 @@ export class World {
         this.screenTopLeftCorner = new p5.Vector(0, 0);
         this.objectsOnScreen = [];
         this.singularities = [];
+        this.safeZones = [];
+        this.noFlyZone = null;
         this.audio = audio;
         this.craft = null;
         this.endgame = null;

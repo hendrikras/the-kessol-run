@@ -12,3 +12,8 @@ export const ROCK_SIZE = CANVAS_SIZE / 2.5;
 export const ROCK_SPEED = CRAFT_SPEED * 10;
 export const CHASE_DISTANCE = CANVAS_SIZE;
 export const FIRE_INTERVAL = 1000;
+export const Shape = {
+    RECTANGLE: 'rectangle',
+    CIRCLE: 'circle',
+    OVAL: 'oval'
+};

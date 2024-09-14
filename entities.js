@@ -1,24 +1,27 @@
 import p5 from "https://esm.sh/p5@1.10.0";
-import { CANVAS_SIZE } from "./constants.js";
+import {CANVAS_SIZE, Shape} from "./constants.js";
 import { Emitter } from "./classes.js";
 import { SVGPaths } from "./gameobjects.js";
 
 export class Entity {
-  constructor(p5, store, position, speed, angle, {horizontal: size}) {
+  constructor(p5, store, position, speed, angle, {horizontal, vertical}) {
     this.position = p5.createVector(position.x, position.y);
     this.velocity = p5.createVector();
     this.lifespan = 30.0;
     this.acceleration = p5.createVector();
     this.speed = speed;
     this.angle = angle;
-    this.radius = size / 2;
-    this.size = size;
+    this.radiusX = horizontal / 2;
+    this.radiusY = vertical / 2;
+    this.sizeX = horizontal;
+    this.sizeY = vertical;
     this.collides = false;
     this.emitter = new Emitter(p5, store, position);
     this.mass = 10;
     this.p5 = p5;
     this.store = store;
     this.isToBeRemoved = false;
+    this.shape = Shape.CIRCLE;
   }
   equals(other) {
     const className = this.constructor.name;
@@ -64,12 +67,14 @@ export class Entity {
     const halfWidth = Math.abs(x2 - x1) / 2;
     const halfHeight = Math.abs(y2 - y1) / 2;
 
-    if (dx > halfWidth + this.radius || dy > halfHeight + this.radius)
+    if (dx > halfWidth + this.radiusX || dy > halfHeight + this.radiusY)
       return false;
     if (dx <= halfWidth || dy <= halfHeight) return true;
 
-    const cornerDistanceSq = (dx - halfWidth) ** 2 + (dy - halfHeight) ** 2;
-    return cornerDistanceSq <= this.radius ** 2;
+    const cornerDistanceSq =
+      ((dx - halfWidth) / this.radiusX) ** 2 +
+      ((dy - halfHeight) / this.radiusY) ** 2;
+    return cornerDistanceSq <= 1;
   }
 
   getPositionOffset(offset) {
@@ -97,7 +102,7 @@ export class Explosion extends Entity {
   ) {
     super(p5, store, position, speed, angle, size);
     this.collides = false;
-    this.lifespan = Math.sqrt(this.size) * 1.6 * (60 / p5.frameRate());
+    this.lifespan = Math.sqrt(this.sizeX) * 1.6 * (60 / p5.frameRate());
     this.mass = mass;
     this.shockwave = shockwave;
     this.store = store;
@@ -111,7 +116,7 @@ export class Explosion extends Entity {
           .at(-1)
           .applyForce(
             p5.Vector.random2D().mult(
-              Math.sqrt(this.shockwave ? this.size * 2 : this.size),
+              Math.sqrt(this.shockwave ? this.sizeX * 2 : this.sizeX),
             ),
           );
       }
@@ -158,7 +163,7 @@ export class Singularity extends Entity {
       });
     const craftRange = p5.Vector.dist(this.store.craft.position, this.position);
     if (craftRange < CANVAS_SIZE * this.range) {
-      if (craftRange < this.size) {
+      if (craftRange < this.sizeX) {
         if (craft.targets.length === 0) {
           return "You made it!";
         }
@@ -173,6 +178,6 @@ export class Singularity extends Entity {
 
     this.p5.fill(0);
     this.p5.noStroke();
-    this.p5.circle(p.x, p.y, this.size);
+    this.p5.circle(p.x, p.y, this.sizeX);
   }
 }

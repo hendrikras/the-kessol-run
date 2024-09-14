@@ -1,8 +1,8 @@
 import p5 from "https://esm.sh/p5@1.10.0";
-import {BULLET_SIZE, BULLET_SPEED, CANVAS_SIZE, CRAFT_SIZE, FIRE_INTERVAL, TOP_SPEED} from "./constants.js";
+import {BULLET_SIZE, BULLET_SPEED, CANVAS_SIZE, CRAFT_SIZE, FIRE_INTERVAL, Shape, TOP_SPEED} from "./constants.js";
 import { Entity, Singularity } from "./entities.js";
 import { glow } from "./helpers.js";
-import { Craft } from "./classes.js";
+import {Craft, Meteor} from "./classes.js";
 
 export class GameObject extends Entity {
   constructor(p5, store, position, speed, angle, size) {
@@ -12,10 +12,28 @@ export class GameObject extends Entity {
     this.explodes = false;
   }
 
+  isInsideSquare(x1, y1, x2, y2) {
+
+    if (this.shape === Shape.CIRCLE) {
+      return super.isInsideSquare(x1, y1, x2, y2);
+    }
+    const left = this.position.x - this.horizontal / 2;
+    const right = this.position.x + this.horizontal / 2;
+    const top = this.position.y - this.vertical / 2;
+    const bottom = this.position.y + this.vertical / 2;
+
+    return (left < x2 && right > x1 && top < y2 && bottom > y1);
+  }
+
   isCollision(gameObject) {
-    const dist = p5.Vector.sub(gameObject.position, this.position);
-    if (dist.mag() <= gameObject.radius + this.radius) {
-      return dist;
+    if(this.shape === Shape.CIRCLE) {
+      const dist = p5.Vector.sub(gameObject.position, this.position);
+      if (dist.mag() <= gameObject.radiusX + this.radiusX) {
+        return dist;
+      }
+    }
+    if (this.shape === Shape.RECTANGLE) {
+      return gameObject.isInsideSquare(this.position.x - this.radiusX, this.position.y - this.radiusY, this.sizeX, this.sizeY);
     }
     return null;
   }
@@ -91,7 +109,7 @@ export class Bullet extends GameObject {
     ctx.fillStyle = "red";
     const p = this.getPositionOffset(offset);
     ctx.beginPath();
-    ctx.ellipse(p.x, p.y, this.radius, this.radius, 0, 0, 2 * Math.PI);
+    ctx.ellipse(p.x, p.y, this.radiusX, this.radiusX, 0, 0, 2 * Math.PI);
     ctx.fill();
   }
 }
@@ -118,7 +136,10 @@ export class SVGPaths extends GoesKaboom {
     this.width = w;
     this.height = h;
     this.rotate = rotate;
+    this.vertical = size.vertical;
+    this.horizontal = size.horizontal;
   }
+  
   handleCollision(dist, gameObject) {
     super.handleCollision(dist, gameObject);
     // Pauli exclusion!
@@ -141,7 +162,7 @@ export class SVGPaths extends GoesKaboom {
 
     const v = this.p5.createVector(this.width / 2, this.height / 2);
     const pos = v.copy().rotate(this.angle).sub(v);
-    const o = this.p5.createVector(this.radius, this.radius);
+    const o = this.p5.createVector(this.radiusX, this.radiusY);
     const p = this.getPositionOffset(offset).sub(o);
 
     ctx.setTransform(
@@ -198,7 +219,7 @@ export class Turret extends GoesKaboom {
   fire() {
     let currentTime = this.p5.millis();
     if (currentTime - this.lastFireTime > FIRE_INTERVAL) {
-
+    this.store.audio.play("laser");
       const bullet = new Bullet(
           this.p5,
           this.store,
@@ -274,10 +295,106 @@ export class Pointer extends SVGPaths {
     super.draw(offset, ctx, glow(this.p5));
   }
 }
-export class Target extends Pointer {
+export class Target extends SVGPaths {
+  // constructor(p5, store, position, speed, angle, size, viewBox, shapes) {
+  //   super(p5, store, position, speed, angle, size, viewBox, shapes);
+  //   this.mass = 0;
+  // }
+
+  isInReachOfCraft(craft, reachThreshold) {
+    const distance = p5.Vector.dist(this.position, craft.position);
+    return distance <= reachThreshold;
+  }
+  // checkCollision(gameObject) {
+  //   super.checkCollision(gameObject);
+  // }
+  //
+  // handleCollision(dist, gameObject) {
+  //   super.handleCollision(dist, gameObject);
+  //   if (gameObject instanceof Goal) {
+  //     gameObject.targetsReached(this);
+  //   }
+  // }
+handleMovement(friction = true) {
+  // Create drag
+  const speed = this.velocity.mag();
+  const dragMagnitude = 0.0005 * speed * speed;
+  const drag = this.velocity.copy();
+  drag.mult(-1);
+  drag.normalize();
+  drag.mult(dragMagnitude);
+
+  // Constrain direction to the direction it's being pulled
+  const pullDirection = this.acceleration.copy().normalize();
+  const constrainedDrag = drag.mult(drag.dot(pullDirection));
+
+  this.applyForce(constrainedDrag);
+  
+  super.handleMovement(friction);
+}
+}
+export class Exhaust extends GameObject {
   handleCollision(_, gameObject) {
-    if (gameObject instanceof Craft) {
-      gameObject.targetsReached(this);
+    if (gameObject instanceof Target) {
+      this.store.craft.targetsReached(this);
     }
+    this.removeFromWorld();
+  }
+
+  handleMovement( bomb) {
+    // const bombRange = p5.Vector.dist(this.store.craft.position, this.position);
+    // if (bombRange < CANVAS_SIZE * this.range) {
+    //   if (bombRange < this.sizeX) {
+    //     if (craft.targets.length === 0) {
+    //       return "You made it!";
+    //     }
+    //     return "Game Over";
+    //   }
+      this.applyGravity(bomb);
+      bomb.checkCollision(this);
+  }
+  draw(offset, ctx) {
+    const p = this.getPositionOffset(offset);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, this.radiusX, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+}
+
+export class SafeZone extends GameObject {
+  constructor(p5, store, position, width, height) {
+    super(p5, store, position, speed, angle, {horizontal: width, vertical: height });
+    this.shape = Shape.RECTANGLE;
+  }
+  handleCollision(_, gameObject) {
+    if (gameObject instanceof Meteor) {
+      gameObject.removeFromWorld();
+    }
+  }
+  draw(offset, ctx) {
+    const p = this.getPositionOffset(offset);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.beginPath();
+    ctx.rect(p.x - this.radiusX, p.y - this.radiusY, this.radiusX * 2, this.radiusY * 2);
+    ctx.fill();
+  }
+}
+
+export class NoFlyZone extends SafeZone {
+  handleCollision(_, gameObject) {
+      if (gameObject instanceof Craft) {
+          const awayVector = p5.Vector.sub(gameObject.position, this.position).normalize();
+          const forceMagnitude = 0.5; // Adjust this value to control the strength of the force
+          const force = awayVector.mult(forceMagnitude);
+          gameObject.applyForce(force);
+      }
+  }
+  draw(offset, ctx) {
+    const p = this.getPositionOffset(offset);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.beginPath();
+    ctx.rect(p.x - this.radiusX, p.y - this.radiusY, this.radiusX * 2, this.radiusY * 2);
+    ctx.fill();
   }
 }
