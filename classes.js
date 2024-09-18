@@ -59,9 +59,9 @@ class Vehicle extends GoesKaboom {
     radiusVector.mult(this.radius + this.height * 0.0333); // Scale the vector by the radius
     return p5.Vector.add(this.position, radiusVector);
   }
-  getRadiusPosition(angle, radius) {
-    const radiusVector = p5.Vector.fromAngle(angle - radians(270));
-    radiusVector.mult(radius);
+  geExaustPosition() {
+    const radiusVector = p5.Vector.fromAngle(-this.angle - radians(270));
+    radiusVector.mult(this.radius);
     return p5.Vector.add(this.position, radiusVector);
   }
   getTargetPosition(angle) {
@@ -135,33 +135,36 @@ class Craft extends Vehicle {
 
     const multiplierX = store.screenTopLeftCorner.x / width + 1;
     const multiplierY = store.screenTopLeftCorner.y / height + 1;
-    const threshold = 0.5; // 80% of the screen
-    // Calculate the screen movement
-    const screenDeltaX =
-      this.position.x - width * threshold - store.screenTopLeftCorner.x;
-    const screenDeltaY =
-      this.position.y - height * threshold - store.screenTopLeftCorner.y;
     // move the screen
-    store.screenTopLeftCorner.x = this.position.x - width * threshold;
-    store.screenTopLeftCorner.y = this.position.y - height * threshold;
-
-    objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
-      x: store.screenTopLeftCorner.x + width,
-      y: store.screenTopLeftCorner.y + height,
-    });
-    // move the stars
-    stars.forEach((star) => {
-      // Calculate star movement (inverse of screen movement)
-      star.position.x -= screenDeltaX;
-      star.position.y -= screenDeltaY;
-
-      // Wrap stars around the screen
-      if (star.position.x < 0) star.position.x = width;
-      if (star.position.y < 0) star.position.y = height;
-      if (star.position.x > width) star.position.x = 0;
-      if (star.position.y > height) star.position.y = 0;
-    });
-
+    if (this.position.x < store.screenTopLeftCorner.x) {
+      store.screenTopLeftCorner.x -= width;
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
+        x: store.screenTopLeftCorner.x + width,
+        y: store.screenTopLeftCorner.y + height,
+      });
+    }
+    if (this.position.y < store.screenTopLeftCorner.y) {
+      store.screenTopLeftCorner.y -= height;
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
+        x: store.screenTopLeftCorner.x + width,
+        y: store.screenTopLeftCorner.y + height,
+      });
+    }
+    if (this.position.x > width * multiplierX) {
+      store.screenTopLeftCorner.x += width;
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
+        x: store.screenTopLeftCorner.x + width,
+        y: store.screenTopLeftCorner.y + height,
+      });
+    }
+    if (this.position.y > height * multiplierY) {
+      store.screenTopLeftCorner.y += height;
+      objectsOnScreen = store.getPointsInsideSquare(store.screenTopLeftCorner, {
+        x: store.screenTopLeftCorner.x + width,
+        y: store.screenTopLeftCorner.y + height,
+      });
+    }
+    // Check for cursor keys
     if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
       if (this.angle >= 2 * Math.PI) {
         this.angle = 0;
@@ -176,9 +179,7 @@ class Craft extends Vehicle {
     }
     if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
       if (this.power >= 0) {
-        this.emitter.addParticle(
-          this.getRadiusPosition(-this.angle, this.radius),
-        );
+        this.emitter.addParticle(this.geExaustPosition());
         this.speed = CRAFT_SPEED;
         if (!burn.isPlaying()) {
           burn.play();
