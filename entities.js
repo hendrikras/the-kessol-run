@@ -52,28 +52,19 @@ class Entity {
   }
 
   isInsideSquare(x1, y1, x2, y2) {
-    // Check if the circle's center is inside the square
-    if (
-      this.position.x > x1 &&
-      this.position.x < x2 &&
-      this.position.y > y1 &&
-      this.position.y < y2
-    ) {
-      return true;
-    }
-    // Check if any part of the circle is inside the square
-    let corners = [
-      createVector(x1, y1),
-      createVector(x1, y2),
-      createVector(x2, y1),
-      createVector(x2, y2),
-    ];
-    for (let corner of corners) {
-      if (p5.Vector.dist(this.position, corner) <= this.radius) {
-        return true;
-      }
-    }
-    return false;
+    const dx = Math.abs(this.position.x - (x1 + x2) / 2);
+    const dy = Math.abs(this.position.y - (y1 + y2) / 2);
+    const halfWidth = Math.abs(x2 - x1) / 2;
+    const halfHeight = Math.abs(y2 - y1) / 2;
+
+    if (dx > halfWidth + this.radiusX || dy > halfHeight + this.radiusY)
+      return false;
+    if (dx <= halfWidth || dy <= halfHeight) return true;
+
+    const cornerDistanceSq =
+        ((dx - halfWidth) / this.radiusX) ** 2 +
+        ((dy - halfHeight) / this.radiusY) ** 2;
+    return cornerDistanceSq <= 1;
   }
 
   getPositionOffset() {
